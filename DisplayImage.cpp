@@ -61,7 +61,7 @@ int main (int argc, char** argv)
   ScanImageAndReduceC(img, table);
   t = ((double)getTickCount() - t)/getTickFrequency();
 
-  namedWindow("image", WINDOW_AUTOSIZE);
+  namedWindow("image", WINDOW_NORMAL);
   imshow("image", img);
   waitKey(0);
 

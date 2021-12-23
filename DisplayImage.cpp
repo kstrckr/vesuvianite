@@ -1,70 +1,37 @@
-#include <opencv2/core.hpp>
-#include <opencv2/core/utility.hpp>
-#include <opencv2/imgcodecs.hpp>
-#include <opencv2/highgui.hpp>
+#include "opencv2/imgproc.hpp"
+#include "opencv2/highgui.hpp"
 #include <iostream>
-#include <sstream>
-#include <string>
-
 using namespace cv;
-
-Mat& ScanImageAndReduceC(Mat& I, const uchar* const table)
+Mat src, src_gray;
+Mat dst, detected_edges;
+int lowThreshold = 0;
+const int max_lowThreshold = 100;
+const int ratio = 3;
+const int kernel_size = 3;
+const char* window_name = "Edge Map";
+static void CannyThreshold(int, void*)
 {
-  CV_Assert(I.depth() == CV_8U);
-
-  int channels = I.channels();
-
-  int nRows = I.rows;
-  int nCols = I.cols * channels;
-
-  if (I.isContinuous())
-  {
-    nCols *= nRows;
-    nRows = 1;
-  }
-
-  int i,j;
-  uchar* p;
-  for (i = 0; i < nRows; ++i)
-  {
-    p = I.ptr<uchar>(i);
-    for (j = 0; j < nCols; ++j)
-    {
-      p[j] = table[p[j]];
-    }
-  }
-  return I;
+    blur( src_gray, detected_edges, Size(30,30) );
+    Canny( detected_edges, detected_edges, lowThreshold, lowThreshold*ratio, kernel_size );
+    dst = Scalar::all(0);
+    src.copyTo( dst, detected_edges);
+    imshow( window_name, dst );
 }
-
-int main (int argc, char** argv)
+int main( int argc, char** argv )
 {
-  int divideWidth = 0;
-  std::stringstream s;
-  s << argv[2];
-  s >> divideWidth;
-
-  if (!s || !divideWidth)
+  CommandLineParser parser( argc, argv, "{@input | fruits.jpg | input image}" );
+  src = imread( parser.get<String>( "@input" ), IMREAD_COLOR ); // Load an image
+  if( src.empty() )
   {
-    std::cout << "Invalid number entered for dividing. " << std::endl;
+    std::cout << "Could not open or find the image!\n" << std::endl;
+    std::cout << "Usage: " << argv[0] << " <Input image>" << std::endl;
+    return -1;
   }
-
-  uchar table[256];
-  for (int i = 0; i < 256; ++i)
-  {
-    table[i] = (uchar)(divideWidth * (i/divideWidth));
-  }
-
-  double t = (double)getTickCount();
-  std::string src = argv[1];
-  Mat img = imread(src, IMREAD_GRAYSCALE);
-
-  ScanImageAndReduceC(img, table);
-  t = ((double)getTickCount() - t)/getTickFrequency();
-
-  namedWindow("image", WINDOW_NORMAL);
-  imshow("image", img);
+  dst.create( src.size(), src.type() );
+  cvtColor( src, src_gray, COLOR_BGR2GRAY );
+  namedWindow( window_name, WINDOW_NORMAL );
+  createTrackbar( "Min Threshold:", window_name, &lowThreshold, max_lowThreshold, CannyThreshold );
+  CannyThreshold(0, 0);
   waitKey(0);
-
-
-  std::cout << "Times passed in seconds: " << t << std::endl;
+  return 0;
 }

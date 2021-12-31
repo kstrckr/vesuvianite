@@ -1,3 +1,0 @@
-namespace RawLoader {
-  int loadRaw();
-}

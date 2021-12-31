@@ -5,3 +5,5 @@ manually install pugixml if build fails
 
 
 https://github.com/skewballfox/modern-opencv-template
+https://cliutils.gitlab.io/modern-cmake/chapters/basics/structure.html
+https://gitlab.com/CLIUtils/modern-cmake/-/tree/master/examples/extended-project

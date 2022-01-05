@@ -7,21 +7,21 @@ using namespace std;
 using namespace cv;
 
 namespace imageProc {
-  cv::Mat loadRaw() {
+  cv::Mat loadRaw(std::string path) {
 
     cv::Mat image;
     cv::Mat downsizedImage(1158, 1736, CV_8UC3);
 
-    image = cv::imread( "/home/a/proj/vesuvianite/ideal-target-batch-1/CD.32.2197.cr2" );
+    image = cv::imread(path);
     if ( !image.data )
     {
         printf("No image data \n");
     }
 
     cv::resize(image, downsizedImage, downsizedImage.size(), 0, 0, cv::INTER_CUBIC);
-    namedWindow("Display Image", cv::WINDOW_AUTOSIZE );
-    cv::imshow("Display Image", downsizedImage);
-    cv::waitKey(0);
+    // namedWindow("Display Image", cv::WINDOW_AUTOSIZE );
+    // cv::imshow("Display Image", downsizedImage);
+    // cv::waitKey(0);
 
     return downsizedImage;
   }

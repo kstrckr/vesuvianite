@@ -1,6 +1,6 @@
 #include <opencv4/opencv2/opencv.hpp>
-#include <opencv4/opencv2/core.hpp>
-#include <opencv2/imgproc.hpp>
+// #include <opencv4/opencv2/core.hpp>
+// #include <opencv2/imgproc.hpp>
 #include <vesuvianite/HoughLines.hpp>
 
 using namespace std;
@@ -8,16 +8,9 @@ using namespace cv;
 
 namespace hl
 {
-  int houghLines(cv::Mat image)
+  void houghLines(cv::Mat& image)
   {
     Mat dst, color_dst;
-
-    if (!image.data)
-    {
-      printf("No image data \n");
-      return -1;
-    }
-
 
     Canny(image, dst, 50, 200, 3);
     cvtColor(dst, color_dst, COLOR_GRAY2BGR);
@@ -33,7 +26,5 @@ namespace hl
     namedWindow("Detected Lines", 1);
     imshow("Detected Lines", color_dst);
     waitKey(0);
-
-    return 0;
   }
 }

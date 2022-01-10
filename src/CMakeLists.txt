@@ -3,7 +3,8 @@ file(GLOB HEADER_LIST CONFIGURE_DEPENDS "${Vesuvianite_SRC_DIR}/include/vesuvian
 add_library(rawLoaderLib RawLoader.cxx ${HEADER_LIST})
 add_library(houghLines HoughLines.cxx ${HEADER_LIST})
 add_library(convexHull ConvexHull.cxx ${HEADER_LIST})
-
+add_library(IsolateSubject IsolateSubject.cxx ${HEADER_LIST})
+add_library(GetScaledIsolationRect GetScaledIsolationRect.cxx ${HEADER_LIST})
 
 find_package(OpenCV)
 
@@ -20,3 +21,9 @@ target_compile_features(houghLines PUBLIC cxx_std_20)
 
 target_include_directories(convexHull PUBLIC ../include)
 target_compile_features(convexHull PUBLIC cxx_std_20)
+
+target_include_directories(IsolateSubject PUBLIC ../include)
+target_compile_features(IsolateSubject PUBLIC cxx_std_20)
+
+target_include_directories(GetScaledIsolationRect PUBLIC ../include)
+target_compile_features(GetScaledIsolationRect PUBLIC cxx_std_20)

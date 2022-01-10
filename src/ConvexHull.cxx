@@ -15,7 +15,7 @@ namespace cvxHull
   {
 
     cvtColor(image, src_gray, COLOR_BGR2GRAY);
-    blur(src_gray, src_gray, Size(3, 3));
+    // blur(src_gray, src_gray, Size(3, 3));
     const char *source_window = "Source";
     namedWindow(source_window);
     imshow(source_window, image);
@@ -40,8 +40,8 @@ namespace cvxHull
     for (size_t i = 0; i < contours.size(); i++)
     {
       Scalar color = Scalar(rng.uniform(0, 256), rng.uniform(0, 256), rng.uniform(0, 256));
-      // drawContours(drawing, contours, (int)i, color);
-      drawContours(drawing, hull, (int)i, color);
+      drawContours(drawing, contours, (int)i, color);
+      // drawContours(drawing, hull, (int)i, color);
     }
     imshow("Hull demo", drawing);
   }

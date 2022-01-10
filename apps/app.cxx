@@ -3,12 +3,17 @@
 #include <vesuvianite/HoughLines.hpp>
 #include <vesuvianite/RawLoader.hpp>
 #include <vesuvianite/ConvexHull.hpp>
+#include <vesuvianite/IsolateSubject.hpp>
+#include <vesuvianite/GetScaledIsolationRect.hpp>
 
 int main() {
   cv::Mat image;
-  image = imageProc::loadRaw("/home/a/proj/vesuvianite/ideal-target-batch-1/51A_8_verso.cr2");
-  cvxHull::convexHull(image);
-  // hl::houghLines(image);
+  cv::RotatedRect isolationSource;
+  image = imageProc::loadRaw("/home/a/proj/vesuvianite/ideal-target-batch-1/51A_82_recto.cr2");
+  isolationSource = IsolateSubject::isolate(image);
+  GetScaledIsolationRect::saveWithPreviewRectangle(image, isolationSource);
+  // cvxHull::convexHull(isolationSource);
+  // hl::houghLines(isolationSource);
   // imageProc::findEdges();
   return 0;
 }

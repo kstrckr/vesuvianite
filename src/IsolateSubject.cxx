@@ -6,26 +6,23 @@
 using namespace cv;
 using namespace std;
 
-int kernelSize = 13;
-Mat shrunken, grey, blurred, blurred_grey, canny_output, contours, convex_hull, dst;
-int threshold_value = 51;
-int threshold_type = 0;
-int const max_value = 255;
-int const max_type = 4;
-int const max_binary_value = 255;
-RNG rng(12345);
-RotatedRect rect;
-cv::Size rawSize;
-
 namespace IsolateSubject
 {
+  int kernelSize = 13;
+  Mat shrunken, grey, blurred, blurred_grey, canny_output, contours, convex_hull, dst;
+  int threshold_value = 51;
+  int threshold_type = 0;
+  int const max_value = 255;
+  int const max_type = 4;
+  int const max_binary_value = 255;
+  RNG rng(12345);
+  RotatedRect rect;
+  cv::Size rawSize;
   cv::RotatedRect isolate(cv::Mat src)
   {
     rawSize = src.size();
-    cv::Mat isolationSource(rawSize.height / 5, rawSize.width / 5, CV_8UC3);
-    // cv::Mat blurred(100, 150, CV_8UC3);
+    cv::Mat isolationSource(100, 150, CV_8UC3);
     cv::resize(src, shrunken, isolationSource.size(), 0, 0, cv::INTER_CUBIC);
-    // blurred = image.clone();
     cvtColor(shrunken, grey, COLOR_BGR2GRAY); // Convert the image to Gray
     GaussianBlur(grey, blurred_grey, Size(kernelSize, kernelSize), 0);
     // threshold( blurred_grey, dst, threshold_value, max_binary_value, threshold_type );

@@ -3,5 +3,4 @@
 namespace IsolateSubject
 {
   cv::RotatedRect isolate(cv::Mat image);
-  void threshold_callback(int, void*);
 }

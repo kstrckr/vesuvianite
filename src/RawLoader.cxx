@@ -18,11 +18,13 @@ namespace imageProc {
         printf("No image data \n");
     }
 
-    cv::resize(image, downsizedImage, downsizedImage.size(), 0, 0, cv::INTER_CUBIC);
+    // cv::resize(image, downsizedImage, downsizedImage.size(), 0, 0, cv::INTER_CUBIC);
+    // return downsizedImage;
+
     // namedWindow("Display Image", cv::WINDOW_AUTOSIZE );
     // cv::imshow("Display Image", downsizedImage);
     // cv::waitKey(0);
 
-    return downsizedImage;
+    return image;
   }
 } // namespace lib

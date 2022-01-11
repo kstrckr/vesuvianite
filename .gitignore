@@ -1043,4 +1043,5 @@ dkms.conf
 #personal
 ideal-target-batch-1/
 non-ideal-target-batch-1/
+output_images/
 .vscode

@@ -5,15 +5,16 @@
 #include <vesuvianite/ConvexHull.hpp>
 #include <vesuvianite/IsolateSubject.hpp>
 #include <vesuvianite/GetScaledIsolationRect.hpp>
+// #include <vesuvianite/SubjectPlacement.hpp.hpp>
+
+Placement placementData;
 
 int main() {
   cv::Mat image;
   cv::RotatedRect isolationSource;
-  image = imageProc::loadRaw("/home/a/proj/vesuvianite/ideal-target-batch-1/51A_82_recto.cr2");
+  image = imageProc::loadRaw("/home/a/proj/vesuvianite/ideal-target-batch-1/CD.32.2197.cr2");
   isolationSource = IsolateSubject::isolate(image);
-  GetScaledIsolationRect::saveWithPreviewRectangle(image, isolationSource);
-  // cvxHull::convexHull(isolationSource);
-  // hl::houghLines(isolationSource);
-  // imageProc::findEdges();
+  placementData = GetScaledIsolationRect::getScaledRectAndBound(image, isolationSource);
+  
   return 0;
 }

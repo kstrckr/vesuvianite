@@ -5,6 +5,7 @@ add_library(houghLines HoughLines.cxx ${HEADER_LIST})
 add_library(convexHull ConvexHull.cxx ${HEADER_LIST})
 add_library(IsolateSubject IsolateSubject.cxx ${HEADER_LIST})
 add_library(GetScaledIsolationRect GetScaledIsolationRect.cxx ${HEADER_LIST})
+add_library(SubjectPlacement INTERFACE ${HEADER_LIST})
 
 find_package(OpenCV)
 
@@ -27,3 +28,6 @@ target_compile_features(IsolateSubject PUBLIC cxx_std_20)
 
 target_include_directories(GetScaledIsolationRect PUBLIC ../include)
 target_compile_features(GetScaledIsolationRect PUBLIC cxx_std_20)
+
+target_include_directories(SubjectPlacement INTERFACE ../include)
+target_compile_features(SubjectPlacement INTERFACE cxx_std_20)

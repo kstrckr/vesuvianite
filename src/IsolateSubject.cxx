@@ -22,7 +22,7 @@ namespace IsolateSubject
   cv::RotatedRect isolate(cv::Mat src)
   {
     rawSize = src.size();
-    cv::Mat isolationSource(rawSize.height / 10, rawSize.width / 10, CV_8UC3);
+    cv::Mat isolationSource(rawSize.height / 5, rawSize.width / 5, CV_8UC3);
     // cv::Mat blurred(100, 150, CV_8UC3);
     cv::resize(src, shrunken, isolationSource.size(), 0, 0, cv::INTER_CUBIC);
     // blurred = image.clone();

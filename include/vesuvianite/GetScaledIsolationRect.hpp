@@ -1,6 +1,7 @@
 #include <opencv4/opencv2/opencv.hpp>
+#include <vesuvianite/SubjectPlacement.hpp>
 
 namespace GetScaledIsolationRect
 {
-  void saveWithPreviewRectangle(cv::Mat &image, cv::RotatedRect);
+  Placement getScaledRectAndBound(cv::Mat &image, cv::RotatedRect);
 }

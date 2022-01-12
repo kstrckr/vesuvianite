@@ -21,7 +21,7 @@ namespace IsolateSubject
   cv::RotatedRect isolate(cv::Mat src)
   {
     rawSize = src.size();
-    namedWindow("IsolateSubject", cv::WINDOW_NORMAL);
+    // namedWindow("IsolateSubject", cv::WINDOW_NORMAL);
 
     cv::Mat isolationSource(100, 150, CV_8UC3);
     cv::resize(src, shrunken, isolationSource.size(), 0, 0, cv::INTER_CUBIC);

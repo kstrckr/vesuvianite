@@ -15,8 +15,6 @@ namespace GetScaledIsolationRect
   Placement getScaledRectAndBound(cv::Mat &image, cv::RotatedRect isolationRect)
   {
     baseSize = image.size();
-    // px = baseSize.width / 5;
-    // py = baseSize.height / 5;
     px = 150;
     py = 100;
     Point2f scaledCenter = Point2f(
@@ -28,12 +26,12 @@ namespace GetScaledIsolationRect
       (isolationRect.size.height / py * baseSize.height) + 0.02 * baseSize.width
     );
     scaledRotatedRect = RotatedRect(scaledCenter, scaledSize, isolationRect.angle);
-    Scalar color = Scalar(255, 0, 0);
+    Scalar color = Scalar(0, 255, 0);
     Point2f scaled_points[4];
     scaledRotatedRect.points(scaled_points);
     // for (int j = 0; j < 4; j++)
     // {
-    //   line(image, scaled_points[j], scaled_points[(j + 1) % 4], color);
+    //   line(image, scaled_points[j], scaled_points[(j + 1) % 4], color, 25);
     // }
     Rect boundingRect = scaledRotatedRect.boundingRect();
     // rectangle(image, boundingRect, Scalar(0, 255, 0), 5);

@@ -1044,4 +1044,6 @@ dkms.conf
 ideal-target-batch-1/
 non-ideal-target-batch-1/
 output_images/
+challenge-examples/
+known-failures/
 .vscode

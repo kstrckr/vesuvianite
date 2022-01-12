@@ -21,7 +21,7 @@ namespace imageProc {
     // cv::resize(image, downsizedImage, downsizedImage.size(), 0, 0, cv::INTER_CUBIC);
     // return downsizedImage;
 
-    // namedWindow("Display Image", cv::WINDOW_AUTOSIZE );
+    // namedWindow("Display Image", cv::WINDOW_NORMAL );
     // cv::imshow("Display Image", downsizedImage);
     // cv::waitKey(0);
 

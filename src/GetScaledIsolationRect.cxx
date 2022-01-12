@@ -37,7 +37,7 @@ namespace GetScaledIsolationRect
     // }
     Rect boundingRect = scaledRotatedRect.boundingRect();
     // rectangle(image, boundingRect, Scalar(0, 255, 0), 5);
-    // namedWindow("Display Image", cv::WINDOW_AUTOSIZE);
+    // namedWindow("Display Image", cv::WINDOW_NORMAL);
     // cv::imshow("Display Image", image);
     // cv::waitKey(0);
     // imwrite("/home/a/proj/vesuvianite/output_images/out_full.jpg", image);

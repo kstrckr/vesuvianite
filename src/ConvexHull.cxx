@@ -80,7 +80,7 @@ namespace cvxHull
           long duration = value.count();
           std::string timeString = std::to_string(duration);
           std::string outputPath = "/home/a/proj/vesuvianite/output_images/";
-          imwrite(outputPath + timeString + ".jpg", isolatedROI);
+          imwrite(outputPath + timeString + ".png", isolatedROI);
           return;
         }
       }

@@ -17,15 +17,20 @@ namespace Source
 
     ProcessingTarget(std::string pathToRaw);
 
-  // private:
-  //   int thumbnailGaussianKernelSize;
-  //   int thumbnailThresholdValue;
+    void displaySourceImage();
+    void displayThumbnailSource();
+    cv::Mat drawRect();
+    cv::Mat drawContours();
 
-  //   int fullsizeGaussianKernelSize;
-  //   int fullsizeThresholdValue;
+  private:
+    int thumbnailGaussianKernelSize;
+    int thumbnailThresholdValue;
 
-  //   void thumbnailIsolation();
-  //   void fullsieIsolation();
+    int fullsizeGaussianKernelSize;
+    int fullsizeThresholdValue;
+
+    void thumbnailIsolation();
+    void fullsieIsolation();
   };
 }
 

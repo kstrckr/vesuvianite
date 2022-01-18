@@ -6,6 +6,7 @@
 #include <vesuvianite/ConvexHull.hpp>
 #include <vesuvianite/IsolateSubject.hpp>
 #include <vesuvianite/GetScaledIsolationRect.hpp>
+#include <vesuvianite/SourceImage.hpp>
 
 Placement placementData;
 
@@ -18,13 +19,17 @@ int main()
   for (const auto &entry : std::filesystem::directory_iterator(path))
   {
     std::string filePath = entry.path();
-    image = imageProc::loadRaw(filePath);
-    isolationSource = IsolateSubject::isolate(image);
-    placementData = GetScaledIsolationRect::getScaledRectAndBound(image, isolationSource);
-    cvxHull::convexHull(placementData, image);
+    // image = imageProc::loadRaw(filePath);
+    // isolationSource = IsolateSubject::isolate(image);
+    // placementData = GetScaledIsolationRect::getScaledRectAndBound(image, isolationSource);
+    // cvxHull::convexHull(placementData, image);
+    
+    // Source::ProcessingTarget processingTarget = Source::ProcessingTarget(filePath);
   }
 
   // image = imageProc::loadRaw("/home/a/proj/vesuvianite/ideal-target-batch-1/CD.32.2197.cr2");
+    Source::ProcessingTarget processingTarget = Source::ProcessingTarget("/home/a/proj/vesuvianite/ideal-target-batch-1/CD.32.2197.cr2");
+
   // isolationSource = IsolateSubject::isolate(image);
   // placementData = GetScaledIsolationRect::getScaledRectAndBound(image, isolationSource);
   // cvxHull::convexHull(placementData, image);

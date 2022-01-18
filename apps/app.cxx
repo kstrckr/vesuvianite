@@ -14,7 +14,7 @@ int main()
   cv::Mat image;
   cv::RotatedRect isolationSource;
 
-  std::string path = "/run/media/a/4tb/Downloads/example_t2t_raws/drive-download-20211206T062405Z-001/samples_uncropped_RAW/originlabs_alignment_app_testin2_20190723/";
+  std::string path = "/run/media/a/4tb/Downloads/example_t2t_raws/51A/51A/";
   for (const auto &entry : std::filesystem::directory_iterator(path))
   {
     std::string filePath = entry.path();

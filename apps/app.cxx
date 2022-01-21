@@ -23,13 +23,23 @@ int main()
     // isolationSource = IsolateSubject::isolate(image);
     // placementData = GetScaledIsolationRect::getScaledRectAndBound(image, isolationSource);
     // cvxHull::convexHull(placementData, image);
-    
     // Source::ProcessingTarget processingTarget = Source::ProcessingTarget(filePath);
+
+    Source::ProcessingTarget processingTarget = Source::ProcessingTarget(filePath);
+    cv::Mat thumbnailWithRect = processingTarget.drawRect();
+    namedWindow(path, cv::WINDOW_NORMAL);
+    imshow(path, thumbnailWithRect);
+    cv::waitKey(0);
   }
 
   // image = imageProc::loadRaw("/home/a/proj/vesuvianite/ideal-target-batch-1/CD.32.2197.cr2");
-    Source::ProcessingTarget processingTarget = Source::ProcessingTarget("/home/a/proj/vesuvianite/ideal-target-batch-1/CD.32.2197.cr2");
 
+  // Source::ProcessingTarget processingTarget = Source::ProcessingTarget("/home/a/proj/vesuvianite/ideal-target-batch-1/CD.32.2197.cr2");
+  // cv::Mat thumbnailWithRect = processingTarget.drawRect();
+  // namedWindow("IsolateSubject", cv::WINDOW_NORMAL);
+  // imshow("IsolateSubject", thumbnailWithRect);
+  // cv::waitKey(0);
+  
   // isolationSource = IsolateSubject::isolate(image);
   // placementData = GetScaledIsolationRect::getScaledRectAndBound(image, isolationSource);
   // cvxHull::convexHull(placementData, image);

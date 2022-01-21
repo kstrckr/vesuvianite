@@ -13,6 +13,8 @@ namespace Source
     cv::Mat isolationThumbnail;
 
     cv::RotatedRect thumbnailSubjectRectangle;
+    bool thumbnailIsLikelyIsolated;
+    bool subjectIsLikelyIsolated;
     cv::Rect finalBoundingBox;
 
     ProcessingTarget(std::string pathToRaw);
@@ -23,8 +25,13 @@ namespace Source
     cv::Mat drawContours();
 
   private:
+    cv::Scalar color;
+    int thumbnailScaleFactor;
+    int thumbnailWidth;
+    int thumbnailHeight;
     int thumbnailGaussianKernelSize;
     int thumbnailThresholdValue;
+    int thumbnailAreaDivisor;
 
     int fullsizeGaussianKernelSize;
     int fullsizeThresholdValue;

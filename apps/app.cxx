@@ -1,5 +1,7 @@
 #include <filesystem>
 #include <opencv4/opencv2/opencv.hpp>
+#include <nfd.h>
+// #include <stdio.h>
 
 #include <vesuvianite/HoughLines.hpp>
 #include <vesuvianite/RawLoader.hpp>
@@ -15,22 +17,45 @@ int main()
   cv::Mat image;
   cv::RotatedRect isolationSource;
 
-  std::string path = "/run/media/a/4tb/Downloads/example_t2t_raws/51A/51A/";
-  for (const auto &entry : std::filesystem::directory_iterator(path))
-  {
-    std::string filePath = entry.path();
-    // image = imageProc::loadRaw(filePath);
-    // isolationSource = IsolateSubject::isolate(image);
-    // placementData = GetScaledIsolationRect::getScaledRectAndBound(image, isolationSource);
-    // cvxHull::convexHull(placementData, image);
-    // Source::ProcessingTarget processingTarget = Source::ProcessingTarget(filePath);
+  // std::string path = "/run/media/a/4tb/Downloads/example_t2t_raws/51A/51A/";
+  NFD_Init();
 
-    Source::ProcessingTarget processingTarget = Source::ProcessingTarget(filePath);
-    cv::Mat imageWithRect = processingTarget.drawFinalImageWithRect();
-    namedWindow(path, cv::WINDOW_NORMAL);
-    imshow(path, imageWithRect);
-    cv::waitKey(0);
+  nfdchar_t *outPath;
+  nfdresult_t result = NFD_PickFolderN(&outPath, "/run/media/a/4tb/Downloads/example_t2t_raws/51A/51A/");
+
+  if (result == NFD_OKAY)
+  {
+    puts("Processing raws in selected directory");
+    puts(outPath);
+
+    for (const auto &entry : std::filesystem::directory_iterator(outPath))
+    {
+      std::string filePath = entry.path();
+      // image = imageProc::loadRaw(filePath);
+      // isolationSource = IsolateSubject::isolate(image);
+      // placementData = GetScaledIsolationRect::getScaledRectAndBound(image, isolationSource);
+      // cvxHull::convexHull(placementData, image);
+      // Source::ProcessingTarget processingTarget = Source::ProcessingTarget(filePath);
+
+      Source::ProcessingTarget processingTarget = Source::ProcessingTarget(filePath);
+      cv::Mat imageWithRect = processingTarget.drawFinalImageWithRect();
+      namedWindow(outPath, cv::WINDOW_NORMAL);
+      imshow(outPath, imageWithRect);
+      cv::waitKey(0);
+    }
+
+    NFD_FreePath(outPath);
   }
+  else if (result == NFD_CANCEL)
+  {
+    puts("User pressed cancel.");
+  }
+  else
+  {
+    printf("Error: %s\n", NFD_GetError());
+  }
+
+  NFD_Quit();
 
   // image = imageProc::loadRaw("/home/a/proj/vesuvianite/ideal-target-batch-1/CD.32.2197.cr2");
 

@@ -38,7 +38,8 @@ namespace cvxHull
     if (pd.isolationBoundingRect.y + pd.isolationBoundingRect.height > rawSize.height)
     {
       pd.isolationBoundingRect.height = rawSize.height - pd.isolationBoundingRect.y;
-    }    
+    }
+
     Mat isolatedROI(image, pd.isolationBoundingRect);
     cvtColor(isolatedROI, src_gray, COLOR_BGR2GRAY);
     GaussianBlur(src_gray, blurred_grey, Size(kernelSize, kernelSize), 0);
@@ -90,6 +91,7 @@ namespace cvxHull
     long duration = value.count();
     std::string timeString = std::to_string(duration);
     std::string outputPath = "/home/a/proj/vesuvianite/output_images/";
+
     imwrite(outputPath + timeString + ".jpg", isolatedROI);
 
     // namedWindow("minRects", cv::WINDOW_NORMAL);

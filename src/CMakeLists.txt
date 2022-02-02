@@ -6,6 +6,7 @@ add_library(convexHull ConvexHull.cxx ${HEADER_LIST})
 add_library(IsolateSubject IsolateSubject.cxx ${HEADER_LIST})
 add_library(GetScaledIsolationRect GetScaledIsolationRect.cxx ${HEADER_LIST})
 add_library(SubjectPlacement INTERFACE ${HEADER_LIST})
+add_library(SourceImage SourceImage.cxx ${HEADER_LIST})
 
 find_package(OpenCV)
 
@@ -31,3 +32,6 @@ target_compile_features(GetScaledIsolationRect PUBLIC cxx_std_20)
 
 target_include_directories(SubjectPlacement INTERFACE ../include)
 target_compile_features(SubjectPlacement INTERFACE cxx_std_20)
+
+target_include_directories(SourceImage PUBLIC ../include)
+target_compile_features(SourceImage PUBLIC cxx_std_20)

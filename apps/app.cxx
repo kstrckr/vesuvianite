@@ -26,7 +26,7 @@ int main()
     // Source::ProcessingTarget processingTarget = Source::ProcessingTarget(filePath);
 
     Source::ProcessingTarget processingTarget = Source::ProcessingTarget(filePath);
-    cv::Mat imageWithRect = processingTarget.drawFullImageWithRect();
+    cv::Mat imageWithRect = processingTarget.drawFinalImageWithRect();
     namedWindow(path, cv::WINDOW_NORMAL);
     imshow(path, imageWithRect);
     cv::waitKey(0);
@@ -39,10 +39,10 @@ int main()
   // namedWindow("IsolateSubject", cv::WINDOW_NORMAL);
   // imshow("IsolateSubject", thumbnailWithRect);
   // cv::waitKey(0);
-  
+
   // isolationSource = IsolateSubject::isolate(image);
   // placementData = GetScaledIsolationRect::getScaledRectAndBound(image, isolationSource);
   // cvxHull::convexHull(placementData, image);
-  
+
   return 0;
 }

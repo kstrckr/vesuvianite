@@ -29,6 +29,7 @@ Source::ProcessingTarget::ProcessingTarget(std::string pathToRaw)
 
   thumbnailIsolation();
   scaleIsollationRect();
+  fullsizeIsolation();
 }
 
 void Source::ProcessingTarget::thumbnailIsolation()
@@ -107,7 +108,7 @@ cv::Mat Source::ProcessingTarget::drawFinalImageWithRect()
 {
   cv::Mat clonedFullImage = sourceImage.clone();
   cv::Point2f rect_points[4];
-  fullIsolationRotatedRect.points(rect_points);
+  finalSubjectRectrangle.points(rect_points);
   for (int j = 0; j < 4; j++)
   {
     cv::line(clonedFullImage, rect_points[j], rect_points[(j + 1) % 4], color, 8);

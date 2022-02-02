@@ -15,13 +15,18 @@ namespace Source
     cv::RotatedRect thumbnailSubjectRectangle;
     bool thumbnailIsLikelyIsolated;
     bool subjectIsLikelyIsolated;
+    cv::Rect fullIsolationBounding;
     cv::Rect finalBoundingBox;
+    cv::RotatedRect finalSubjectRectrangle;
+    cv::RotatedRect fullIsolationRotatedRect;
 
     ProcessingTarget(std::string pathToRaw);
 
     void displaySourceImage();
     void displayThumbnailSource();
-    cv::Mat drawRect();
+    cv::Mat drawThumbnailWithRect();
+    cv::Mat drawFullImageWithRect();
+    cv::Mat drawFinalImageWithRect();
     cv::Mat drawContours();
 
   private:
@@ -37,7 +42,8 @@ namespace Source
     int fullsizeThresholdValue;
 
     void thumbnailIsolation();
-    void fullsieIsolation();
+    void fullsizeIsolation();
+    void scaleIsollationRect();
   };
 }
 

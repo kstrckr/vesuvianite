@@ -26,9 +26,9 @@ int main()
     // Source::ProcessingTarget processingTarget = Source::ProcessingTarget(filePath);
 
     Source::ProcessingTarget processingTarget = Source::ProcessingTarget(filePath);
-    cv::Mat thumbnailWithRect = processingTarget.drawRect();
+    cv::Mat imageWithRect = processingTarget.drawFullImageWithRect();
     namedWindow(path, cv::WINDOW_NORMAL);
-    imshow(path, thumbnailWithRect);
+    imshow(path, imageWithRect);
     cv::waitKey(0);
   }
 

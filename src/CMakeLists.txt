@@ -7,6 +7,7 @@ add_library(IsolateSubject IsolateSubject.cxx ${HEADER_LIST})
 add_library(GetScaledIsolationRect GetScaledIsolationRect.cxx ${HEADER_LIST})
 add_library(SubjectPlacement INTERFACE ${HEADER_LIST})
 add_library(SourceImage SourceImage.cxx ${HEADER_LIST})
+add_library(XMPWriter XMPWriter.cxx ${HEADER_LIST})
 
 find_package(OpenCV)
 
@@ -14,6 +15,12 @@ if(OpenCV_FOUND)
   include_directories( ${OpenCV_INCLUDE_DIRS} )
   target_link_libraries( rawLoaderLib ${OpenCV_LIBS} )
 endif()
+
+include_directories(../xmpsdk)
+target_link_libraries(XMPWriter xmpsdk)
+
+target_include_directories(XMPWriter PUBLIC ../include)
+target_compile_features(XMPWriter PUBLIC cxx_std_20)
 
 target_include_directories(rawLoaderLib PUBLIC ../include)
 target_compile_features(rawLoaderLib PUBLIC cxx_std_20)

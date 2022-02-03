@@ -111,7 +111,7 @@ cv::Mat Source::ProcessingTarget::drawFinalImageWithRect()
   finalSubjectRectrangle.points(rect_points);
   for (int j = 0; j < 4; j++)
   {
-    cv::line(clonedFullImage, rect_points[j], rect_points[(j + 1) % 4], color, 8);
+    cv::line(clonedFullImage, rect_points[j], rect_points[(j + 1) % 4], color, 3);
   }
   return clonedFullImage;
 }

@@ -21,7 +21,7 @@ int main()
   NFD_Init();
 
   nfdchar_t *outPath;
-  nfdresult_t result = NFD_PickFolderN(&outPath, "/run/media/a/4tb/Downloads/example_t2t_raws/51A/51A/");
+  nfdresult_t result = NFD_PickFolderN(&outPath, NULL);
 
   if (result == NFD_OKAY)
   {
@@ -39,8 +39,16 @@ int main()
 
       Source::ProcessingTarget processingTarget = Source::ProcessingTarget(filePath);
       cv::Mat imageWithRect = processingTarget.drawFinalImageWithRect();
-      namedWindow(outPath, cv::WINDOW_NORMAL);
-      imshow(outPath, imageWithRect);
+      // namedWindow(outPath, cv::WINDOW_NORMAL);
+      // imshow(outPath, imageWithRect);
+
+      auto now = std::chrono::system_clock::now();
+      auto now_ms = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
+      auto epoch = now_ms.time_since_epoch();
+      auto value = std::chrono::duration_cast<std::chrono::milliseconds>(epoch);
+      long duration = value.count();
+      std::string timeString = std::to_string(duration);
+      imwrite(outPath + timeString + ".jpg", imageWithRect);
       cv::waitKey(0);
     }
 

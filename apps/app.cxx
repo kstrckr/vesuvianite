@@ -22,7 +22,9 @@ int main()
   NFD_Init();
 
   nfdchar_t *outPath;
-  nfdresult_t result = NFD_PickFolderN(&outPath, "/run/media/a/4tb/Downloads/example_t2t_raws/51A/51A/");
+  nfdresult_t result = NFD_PickFolderN(&outPath, "/home/a/proj/vesuvianite/known-failures");
+  std::string path;
+  char buffer[1000];
 
   if (result == NFD_OKAY)
   {
@@ -32,16 +34,14 @@ int main()
     for (const auto &entry : std::filesystem::directory_iterator(outPath))
     {
       std::string filePath = entry.path();
-      // image = imageProc::loadRaw(filePath);
-      // isolationSource = IsolateSubject::isolate(image);
-      // placementData = GetScaledIsolationRect::getScaledRectAndBound(image, isolationSource);
-      // cvxHull::convexHull(placementData, image);
-      // Source::ProcessingTarget processingTarget = Source::ProcessingTarget(filePath);
 
       Source::ProcessingTarget processingTarget = Source::ProcessingTarget(filePath);
       cv::Mat imageWithRect = processingTarget.drawFinalImageWithRect();
       namedWindow(outPath, cv::WINDOW_NORMAL);
       imshow(outPath, imageWithRect);
+      std::string path = std::string(outPath);
+      sprintf(buffer, "Dumping main XMP for %s", path);
+      XmpTool::XmpWriter xmp = XmpTool::XmpWriter(filePath);
       cv::waitKey(0);
     }
 

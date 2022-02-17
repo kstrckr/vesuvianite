@@ -1,4 +1,5 @@
 add_executable(app app.cxx)
+set(CMAKE_DL_LIBS -lcl)
 target_compile_features(app PRIVATE cxx_std_20)
 target_link_libraries(app PRIVATE rawLoaderLib)
 target_link_libraries(app PRIVATE houghLines)

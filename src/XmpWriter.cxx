@@ -1,104 +1,107 @@
 #include <string>
-#define TXMP_STRING_TYPE std::string
 
+#define TXMP_STRING_TYPE std::string
 #define XMP_INCLUDE_XMPFILES 1
 #define UNIX_ENV 1
 
-#include "XMP.incl_cpp"
-#include "XMP.hpp"
+#include <XMP.hpp>      //NB: no XMP.incl_cpp here on purpose, gets compiled in main...
+#include <XMP.incl_cpp> //include in EXACTLY one source file (i.e. main, in Action gets you trouble...
+#include <XMP_Const.h>
 
-#include <iostream>
-#include <fstream>
+#include <cstdio>
+#include <vector>
+#include <string>
+#include <cstring>
+#include <ctime>
+
+#include <cstdlib>
+#include <stdexcept>
+#include <cerrno>
+#include <vesuvianite/XmpWriter.hpp>
 
 using namespace std;
 
-#include <vesuvianite/XmpWriter.hpp>
+static FILE *sLogFile = stdout;
 
-XmpTool::XmpWriter::XmpWriter()
+static XMP_Status DumpCallback(void *refCon, XMP_StringPtr outStr, XMP_StringLen outLen)
+{
+  XMP_Status status = 0;
+  size_t count;
+  FILE *outFile = static_cast<FILE *>(refCon);
+
+  count = fwrite(outStr, 1, outLen, outFile);
+  if (count != outLen)
+    status = errno;
+  return status;
+}
+
+void XmpTool::XmpWriter::WriteMinorLabel(FILE *log, const char *title)
+{
+
+  fprintf(log, "\n// ");
+  for (size_t i = 0; i < strlen(title); ++i)
+    fprintf(log, "-");
+  fprintf(log, "--\n// %s :\n\n", title);
+  fflush(log);
+}
+
+int XmpTool::XmpWriter::ProcessFile (const char * pathToRaw)
+{
+  bool ok;
+  char buffer[1000];
+
+  SXMPMeta xmpMeta;
+  SXMPFiles xmpFile;
+  XMP_FileFormat format;
+  XMP_OptionBits openFlags, handlerFlags;
+  XMP_PacketInfo xmpPacket;
+
+  sprintf(buffer, "Dumping main XMP for %s", pathToRaw);
+  XmpTool::XmpWriter::WriteMinorLabel(sLogFile, buffer);
+
+  xmpFile.OpenFile(pathToRaw, kXMP_UnknownFile, kXMPFiles_OpenForRead);
+  ok = xmpFile.GetFileInfo(0, &openFlags, &format, &handlerFlags);
+  if (!ok)
+    return 1;
+
+  fprintf(sLogFile, "File info : format = %.8X, handler flags = %.8X\n", format, handlerFlags);
+  fflush(sLogFile);
+
+  ok = xmpFile.GetXMP(&xmpMeta, 0, &xmpPacket);
+  if (!ok)
+    return 1;
+
+  XMP_Int32 offset = (XMP_Int32)xmpPacket.offset;
+  XMP_Int32 length = xmpPacket.length;
+  fprintf(sLogFile, "Packet info : offset = %d, length = %d\n", offset, length);
+  fflush(sLogFile);
+
+  fprintf(sLogFile, "\nInitial XMP from %s\n", pathToRaw);
+  xmpMeta.DumpObject(DumpCallback, sLogFile);
+
+  xmpFile.CloseFile();
+}
+
+XmpTool::XmpWriter::XmpWriter(std::string pathToRaw)
 {
   if (!SXMPMeta::Initialize())
-    exit(1);
-  if (!SXMPFiles::Initialize())
-    exit(1);
-  XMP_OptionBits opts = kXMPFiles_OpenForRead | kXMPFiles_OpenUseSmartHandler;
-
-  std::string status = "";
-  SXMPFiles myFile;
-
-  string filename = "/home/a/proj/vesuvianite/ideal-target-batch-1/51A_8_verso.cr2";
-
-  bool ok = myFile.OpenFile(filename, kXMP_UnknownFile, opts);
-
-  if (!ok)
   {
-    status += "No smart handler available for " + filename + "\n";
-    status += "Trying packet scanning.\n";
-    // Now try using packet scanning
-    opts = kXMPFiles_OpenForUpdate | kXMPFiles_OpenUsePacketScanning;
-    ok = myFile.OpenFile(filename, kXMP_UnknownFile, opts);
+    printf("## SXMPMeta::Initialize failed!\n");
+    exit(1);
   }
 
-  if (ok)
+  XMP_OptionBits options = 0;
+#if UNIX_ENV
+  options |= kXMPFiles_ServerMode;
+#endif
+
+  if (!SXMPFiles::Initialize(options))
   {
-    SXMPMeta meta;
-    myFile.GetXMP(&meta);
 
-    bool exists;
-    string simpleValue;
-    exists = meta.GetProperty(kXMP_NS_XMP, "CreatorTool", &simpleValue, NULL);
-    if (exists)
-      cout << "CreatorTool = " << simpleValue << endl;
-    else
-      simpleValue.clear();
-
-    string elementValue;
-    exists = meta.GetArrayItem(kXMP_NS_DC, "creator", 1, &elementValue, NULL);
-    if (exists)
-      cout << "dc:creator = " << elementValue << endl;
-    else
-      elementValue.clear();
-
-    string propValue;
-    int arrSize = meta.CountArrayItems(kXMP_NS_DC, "subject");
-    for (int i = 1; i <= arrSize; i++)
-    {
-      meta.GetArrayItem(kXMP_NS_DC, "subject", i, &propValue, NULL);
-      cout << "dc:subject[" << i << "] = " << propValue << endl;
-    }
-
-    string itemValue;
-    meta.GetLocalizedText(kXMP_NS_DC, "title", "en", "en-US", NULL,
-                          &itemValue, NULL);
-    cout << "dc:title in English = " << itemValue << endl;
-
-    meta.GetLocalizedText(kXMP_NS_DC, "title", "fr", "fr-FR", NULL,
-                          &itemValue, NULL);
-    cout << "dc:title in French = " << itemValue << endl;
-
-    XMP_DateTime myDate;
-    if (meta.GetProperty_Date(kXMP_NS_XMP, "MetadataDate", &myDate, NULL))
-    {
-      string myDateStr;
-      SXMPUtils::ConvertFromDate(myDate, &myDateStr);
-      cout << "meta:MetadataDate = " << myDateStr << endl;
-    }
-
-    bool exist;
-    string path, value;
-    exist = meta.DoesStructFieldExist(kXMP_NS_EXIF, "Flash", kXMP_NS_EXIF, "Fired");
-    if (exist)
-    {
-      bool flashFired;
-      SXMPUtils::ComposeStructFieldPath(kXMP_NS_EXIF, "Flash", kXMP_NS_EXIF,
-                                        "Fired", &path);
-      meta.GetProperty_Bool(kXMP_NS_EXIF, path.c_str(), &flashFired, NULL);
-      string flash = (flashFired) ? "True" : "False";
-      cout << "Flash Used = " << flash << endl;
-    }
-
-    myFile.CloseFile();
+    printf("## SXMPFiles::Initialize failed!\n");
+    exit(1);
   }
+  const char * path = pathToRaw.c_str();
 
-  SXMPFiles::Terminate();
-  SXMPMeta::Terminate();
+  XmpTool::XmpWriter::ProcessFile(path);
 }

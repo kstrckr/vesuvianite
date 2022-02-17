@@ -8,19 +8,19 @@ add_library(GetScaledIsolationRect GetScaledIsolationRect.cxx ${HEADER_LIST})
 add_library(SubjectPlacement INTERFACE ${HEADER_LIST})
 add_library(SourceImage SourceImage.cxx ${HEADER_LIST})
 add_library(XmpWriter XmpWriter.cxx ${HEADER_LIST})
-message("PROJECT_SOURCE_DIR points to " ${PROJECT_SOURCE_DIR})
-find_package(OpenCV)
 
+find_package(OpenCV)
 if(OpenCV_FOUND)
   include_directories( ${OpenCV_INCLUDE_DIRS} )
   target_link_libraries( rawLoaderLib ${OpenCV_LIBS} )
 endif()
 
-include_directories(.${PROJECT_SOURCE_DIR}/built-xmp-toolkit)
+include_directories(${PROJECT_SOURCE_DIR}/built-xmp-toolkit)
 include_directories(${PROJECT_SOURCE_DIR}/built-xmp-toolkit/public/include)
 
 target_link_libraries(
   XmpWriter
+  ${CMAKE_DL_LIBS}
   ${PROJECT_SOURCE_DIR}/built-xmp-toolkit/public/libraries/i80386linux_x64/debug/staticXMPCore.ar
   ${PROJECT_SOURCE_DIR}/built-xmp-toolkit/public/libraries/i80386linux_x64/debug/staticXMPFiles.ar
   )

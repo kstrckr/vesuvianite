@@ -7,7 +7,8 @@ add_library(IsolateSubject IsolateSubject.cxx ${HEADER_LIST})
 add_library(GetScaledIsolationRect GetScaledIsolationRect.cxx ${HEADER_LIST})
 add_library(SubjectPlacement INTERFACE ${HEADER_LIST})
 add_library(SourceImage SourceImage.cxx ${HEADER_LIST})
-
+add_library(XmpWriter XmpWriter.cxx ${HEADER_LIST})
+message("PROJECT_SOURCE_DIR points to " ${PROJECT_SOURCE_DIR})
 find_package(OpenCV)
 
 if(OpenCV_FOUND)
@@ -15,23 +16,36 @@ if(OpenCV_FOUND)
   target_link_libraries( rawLoaderLib ${OpenCV_LIBS} )
 endif()
 
-target_include_directories(rawLoaderLib PUBLIC ../include)
+include_directories(.${PROJECT_SOURCE_DIR}/built-xmp-toolkit)
+include_directories(${PROJECT_SOURCE_DIR}/built-xmp-toolkit/public/include)
+
+target_link_libraries(
+  XmpWriter
+  ${PROJECT_SOURCE_DIR}/built-xmp-toolkit/public/libraries/i80386linux_x64/debug/staticXMPCore.ar
+  ${PROJECT_SOURCE_DIR}/built-xmp-toolkit/public/libraries/i80386linux_x64/debug/staticXMPFiles.ar
+  )
+
+
+target_include_directories(XmpWriter PUBLIC ${PROJECT_SOURCE_DIR}/include)
+target_compile_features(XmpWriter PUBLIC cxx_std_20)
+
+target_include_directories(rawLoaderLib PUBLIC ${PROJECT_SOURCE_DIR}/include)
 target_compile_features(rawLoaderLib PUBLIC cxx_std_20)
 
-target_include_directories(houghLines PUBLIC ../include)
+target_include_directories(houghLines PUBLIC ${PROJECT_SOURCE_DIR}/include)
 target_compile_features(houghLines PUBLIC cxx_std_20)
 
-target_include_directories(convexHull PUBLIC ../include)
+target_include_directories(convexHull PUBLIC ${PROJECT_SOURCE_DIR}/include)
 target_compile_features(convexHull PUBLIC cxx_std_20)
 
-target_include_directories(IsolateSubject PUBLIC ../include)
+target_include_directories(IsolateSubject PUBLIC ${PROJECT_SOURCE_DIR}/include)
 target_compile_features(IsolateSubject PUBLIC cxx_std_20)
 
-target_include_directories(GetScaledIsolationRect PUBLIC ../include)
+target_include_directories(GetScaledIsolationRect PUBLIC ${PROJECT_SOURCE_DIR}/include)
 target_compile_features(GetScaledIsolationRect PUBLIC cxx_std_20)
 
-target_include_directories(SubjectPlacement INTERFACE ../include)
+target_include_directories(SubjectPlacement INTERFACE ${PROJECT_SOURCE_DIR}/include)
 target_compile_features(SubjectPlacement INTERFACE cxx_std_20)
 
-target_include_directories(SourceImage PUBLIC ../include)
+target_include_directories(SourceImage PUBLIC ${PROJECT_SOURCE_DIR}/include)
 target_compile_features(SourceImage PUBLIC cxx_std_20)

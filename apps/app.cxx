@@ -9,6 +9,7 @@
 #include <vesuvianite/IsolateSubject.hpp>
 #include <vesuvianite/GetScaledIsolationRect.hpp>
 #include <vesuvianite/SourceImage.hpp>
+#include <vesuvianite/XmpWriter.hpp>
 
 Placement placementData;
 

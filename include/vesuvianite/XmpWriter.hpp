@@ -4,6 +4,6 @@ namespace XmpTool
   {
     public:
       XmpWriter(std::string pathToRaw);
-      int ProcessFile (const char * pathToRaw);
+      int ProcessFile (const std::string pathToRaw);
   };
 }

@@ -40,8 +40,7 @@ int main()
       namedWindow(outPath, cv::WINDOW_NORMAL);
       imshow(outPath, imageWithRect);
       std::string path = std::string(outPath);
-      sprintf(buffer, "Dumping main XMP for %s", path);
-      XmpTool::XmpWriter xmp = XmpTool::XmpWriter(filePath);
+      XmpTool::XmpWriter xmp = XmpTool::XmpWriter(filePath, processingTarget);
       cv::waitKey(0);
     }
 

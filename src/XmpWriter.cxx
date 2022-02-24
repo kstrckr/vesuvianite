@@ -20,40 +20,36 @@ using namespace std;
 
 static FILE *sLogFile = stdout;
 
+int XmpTool::XmpWriter::WriteXmp()
+{
+  return 0;
+}
+
 int XmpTool::XmpWriter::ProcessFile(std::string pathToRaw)
 {
   int generalCloseFlags = 0;
   XMP_FileFormat xmpFileFormat = kXMP_UnknownFile;
 
   SXMPFiles xmpFile;
-  std::string xmpDump; // really just the raw string here
+  std::string xmpDump;
   xmpFile.OpenFile(pathToRaw,xmpFileFormat,kXMPFiles_OpenForRead);
   printf("file opened");
-  SXMPMeta xmpMeta; // get meta-object first, then get serialization
+  SXMPMeta xmpMeta;
   if (!xmpFile.GetXMP(&xmpMeta, 0, 0))
     printf("file contains no XMP");
   // Log::warn("file contains no XMP. - says xmpFile.GetXMP()");
   else
   {
-    xmpMeta.SetProperty("http://ns.adobe.com/camera-raw-settings/1.0/", "CropTop", "0.24");
-    xmpMeta.SetProperty("http://ns.adobe.com/camera-raw-settings/1.0/", "CropLeft", "0.25");
-    xmpMeta.SetProperty("http://ns.adobe.com/camera-raw-settings/1.0/", "CropBottom", "0.75");
-    xmpMeta.SetProperty("http://ns.adobe.com/camera-raw-settings/1.0/", "CropRight", "0.75");
-    xmpMeta.SetProperty("http://ns.adobe.com/camera-raw-settings/1.0/", "CropAngle", "5");
+    xmpMeta.SetProperty("http://ns.adobe.com/camera-raw-settings/1.0/", "CropTop", std::to_string(cropTop));
+    xmpMeta.SetProperty("http://ns.adobe.com/camera-raw-settings/1.0/", "CropLeft", std::to_string(cropLeft));
+    xmpMeta.SetProperty("http://ns.adobe.com/camera-raw-settings/1.0/", "CropBottom", std::to_string(cropBottom));
+    xmpMeta.SetProperty("http://ns.adobe.com/camera-raw-settings/1.0/", "CropRight", std::to_string(cropRight));
+    xmpMeta.SetProperty("http://ns.adobe.com/camera-raw-settings/1.0/", "CropAngle", std::to_string(cropAngle));
     xmpMeta.SetProperty("http://ns.adobe.com/camera-raw-settings/1.0/", "CropConstrainToWarp", "0");
     xmpMeta.SetProperty("http://ns.adobe.com/camera-raw-settings/1.0/", "HasCrop", "True");
-  // xmlns:crs="http://ns.adobe.com/camera-raw-settings/1.0/"
-  //   crs:CropTop="0.050845"
-  //  crs:CropLeft="0.24177"
-  //  crs:CropBottom="0.861565"
-  //  crs:CropRight="0.821008"
-  //  crs:CropAngle="4.346749"
-  //  crs:CropConstrainToWarp="0"
-  //  crs:HasCrop="True"
-    xmpMeta.SerializeToBuffer(&xmpDump,
-                              0,  // NOT using kXMP_UseCompactFormat - Use a highly compact RDF syntax and layout.
-                              0); // receiving string, options, 0(default) padding
-    printf("%s",xmpDump.c_str());
+
+    xmpMeta.SerializeToBuffer(&xmpDump, 0, 0);
+    // printf("%s",xmpDump.c_str());
   }
 
 
@@ -61,7 +57,7 @@ int XmpTool::XmpWriter::ProcessFile(std::string pathToRaw)
   return 0;
 }
 
-XmpTool::XmpWriter::XmpWriter(std::string pathToRaw)
+XmpTool::XmpWriter::XmpWriter(std::string pathToRaw, Source::ProcessingTarget processedSource)
 {
   if (!SXMPMeta::Initialize())
   {
@@ -81,6 +77,15 @@ XmpTool::XmpWriter::XmpWriter(std::string pathToRaw)
     exit(1);
   }
   const char *path = pathToRaw.c_str();
+
+  cropLeft = processedSource.cropLeft;
+  cropRight = processedSource.cropRight;
+  cropTop = processedSource.cropTop;
+  cropBottom = processedSource.cropBottom;
+  cropAngle = processedSource.cropAngle;
+
+  int len = strlen(path);
+  outPathString = pathToRaw.substr(0, len - 4);
 
   XmpTool::XmpWriter::ProcessFile(path);
 

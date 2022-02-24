@@ -1,7 +1,7 @@
+#pragma once
+
 #include <opencv4/opencv2/opencv.hpp>
 
-// #ifndef Source
-// #define Source
 
 namespace Source
 {
@@ -28,6 +28,12 @@ namespace Source
     cv::Mat drawFullImageWithRect();
     cv::Mat drawFinalImageWithRect();
     cv::Mat drawContours();
+
+    float cropTop;
+    float cropLeft;
+    float cropBottom;
+    float cropRight;
+    float cropAngle;
 
   private:
     cv::Scalar color;

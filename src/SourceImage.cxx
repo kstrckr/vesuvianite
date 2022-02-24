@@ -177,4 +177,11 @@ void Source::ProcessingTarget::fullsizeIsolation()
     );
 
   finalSubjectRectrangle = cv::RotatedRect(scaledCenter, rotatedRectInROI.size, rotatedRectInROI.angle);
+  cv::Size cropSize = finalSubjectRectrangle.size;
+  cv::Size originalSize = sourceImage.size();
+  cropLeft = (finalSubjectRectrangle.center.x - (0.5 *  cropSize.width)) / originalSize.width;
+  cropTop = (finalSubjectRectrangle.center.y - (0.5 *  cropSize.height)) / originalSize.height;
+  cropRight = (finalSubjectRectrangle.center.x + (0.5 *  cropSize.width)) / originalSize.width;
+  cropBottom = (finalSubjectRectrangle.center.y + (0.5 *  cropSize.height)) / originalSize.height;
+  cropAngle = rotatedRectInROI.angle;
 };

@@ -5,6 +5,7 @@
 #include <string>
 #include <cstring>
 #include <sstream>
+#include <fstream>
 
 #define TXMP_STRING_TYPE std::string
 #define XMP_INCLUDE_XMPFILES 1
@@ -20,8 +21,14 @@ using namespace std;
 
 static FILE *sLogFile = stdout;
 
-int XmpTool::XmpWriter::WriteXmp()
+int XmpTool::XmpWriter::WriteXmp(std::string xmpRawText)
 {
+  ofstream o;
+  std::string outFilePath = outPathString + ".xmp";
+  cout << outFilePath << endl;
+  o.open(outFilePath, ios::out);
+  o << xmpRawText;
+  o.close();
   return 0;
 }
 
@@ -48,7 +55,9 @@ int XmpTool::XmpWriter::ProcessFile(std::string pathToRaw)
     xmpMeta.SetProperty("http://ns.adobe.com/camera-raw-settings/1.0/", "CropConstrainToWarp", "0");
     xmpMeta.SetProperty("http://ns.adobe.com/camera-raw-settings/1.0/", "HasCrop", "True");
 
-    xmpMeta.SerializeToBuffer(&xmpDump, 0, 0);
+    XMP_OptionBits outOpts = kXMP_OmitPacketWrapper | kXMP_UseCanonicalFormat;
+    xmpMeta.SerializeToBuffer(&xmpDump, outOpts);
+    XmpTool::XmpWriter::WriteXmp(xmpDump);
     // printf("%s",xmpDump.c_str());
   }
 

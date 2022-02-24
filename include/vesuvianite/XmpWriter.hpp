@@ -9,7 +9,7 @@ namespace XmpTool
     public:
       XmpWriter(std::string pathToRaw, Source::ProcessingTarget processedSource);
       int ProcessFile (const std::string pathToRaw);
-      int WriteXmp();
+      int WriteXmp(std::string xmpRawText);
     private:
       float cropLeft;
       float cropRight;

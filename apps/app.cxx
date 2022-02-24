@@ -22,7 +22,7 @@ int main()
   NFD_Init();
 
   nfdchar_t *outPath;
-  nfdresult_t result = NFD_PickFolderN(&outPath, "/home/a/proj/vesuvianite/known-failures");
+  nfdresult_t result = NFD_PickFolderN(&outPath, "/home/a/proj/vesuvianite/ideal-target-batch-1");
   std::string path;
   char buffer[1000];
 

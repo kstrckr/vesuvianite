@@ -9,7 +9,9 @@
 
 #define TXMP_STRING_TYPE std::string
 #define XMP_INCLUDE_XMPFILES 1
-#define UNIX_ENV 1
+#define XMP_MacBuild 1
+#define MAC_ENV 1
+// #define UNIX_ENV 1
 
 #include <XMP.incl_cpp> //include in EXACTLY one source file (i.e. main, in Action gets you trouble...
 #include <XMP.hpp>      //NB: no XMP.incl_cpp here on purpose, gets compiled in main...

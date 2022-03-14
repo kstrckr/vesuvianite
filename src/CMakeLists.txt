@@ -23,8 +23,8 @@ include_directories(${PROJECT_SOURCE_DIR}/XMP-Toolkit-SDK-in-vesuvianite/public/
 target_link_libraries(
   XmpWriter
   ${CMAKE_DL_LIBS}
-  ${PROJECT_SOURCE_DIR}/XMP-Toolkit-SDK-in-vesuvianite/public/libraries/macintosh/universal/Debug/staticXMPCore.ar
-  ${PROJECT_SOURCE_DIR}/XMP-Toolkit-SDK-in-vesuvianite/public/libraries/macintosh/universal/Debug/staticXMPFiles.ar
+  ${PROJECT_SOURCE_DIR}/XMP-Toolkit-SDK-in-vesuvianite/public/libraries/macintosh/universal/Debug/libXMPCoreStatic.a
+  ${PROJECT_SOURCE_DIR}/XMP-Toolkit-SDK-in-vesuvianite/public/libraries/macintosh/universal/Debug/libXMPFilesStatic.a
   )
 
 

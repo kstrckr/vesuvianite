@@ -3,15 +3,15 @@
 #include <nfd.h>
 // #include <stdio.h>
 
-#include <vesuvianite/HoughLines.hpp>
-#include <vesuvianite/RawLoader.hpp>
-#include <vesuvianite/ConvexHull.hpp>
-#include <vesuvianite/IsolateSubject.hpp>
-#include <vesuvianite/GetScaledIsolationRect.hpp>
+// #include <vesuvianite/HoughLines.hpp>
+// #include <vesuvianite/RawLoader.hpp>
+// #include <vesuvianite/ConvexHull.hpp>
+// #include <vesuvianite/IsolateSubject.hpp>
+// #include <vesuvianite/GetScaledIsolationRect.hpp>
 #include <vesuvianite/SourceImage.hpp>
 #include <vesuvianite/XmpWriter.hpp>
 
-Placement placementData;
+// Placement placementData;
 
 int main()
 {

@@ -1,3 +1,4 @@
+#include <libraw.h>
 #include <opencv2/opencv.hpp>
 
 #include <vesuvianite/SourceImage.hpp>
@@ -6,30 +7,37 @@ using namespace std;
 
 Source::ProcessingTarget::ProcessingTarget(std::string pathToRaw)
 {
+  int ret = 0;
+  LibRaw* RawProcessor = new LibRaw;
+
   thumbnailIsLikelyIsolated = false;
   subjectIsLikelyIsolated = false;
 
   thumbnailScaleFactor = 50;
   sourcePath = pathToRaw;
-  sourceImage = cv::imread(sourcePath);
-  cv::Size sourceSize = sourceImage.size();
-  thumbnailWidth = sourceSize.width / thumbnailScaleFactor;
-  thumbnailHeight = sourceSize.height / thumbnailScaleFactor;
-  cv::resize(sourceImage, isolationThumbnail, cv::Size(thumbnailWidth, thumbnailHeight), 0, 0, cv::INTER_CUBIC);
+  if ((ret = RawProcessor->open_file(pathToRaw)) != LIBRAW_SUCCESS)
+    {
+      fprintf(stderr, "Cannot open_file %s: %s\n", av[i], libraw_strerror(ret));
+    }
+  // sourceImage = cv::imread(sourcePath);
+  // cv::Size sourceSize = sourceImage.size();
+  // thumbnailWidth = sourceSize.width / thumbnailScaleFactor;
+  // thumbnailHeight = sourceSize.height / thumbnailScaleFactor;
+  // cv::resize(sourceImage, isolationThumbnail, cv::Size(thumbnailWidth, thumbnailHeight), 0, 0, cv::INTER_CUBIC);
 
-  thumbnailGaussianKernelSize = 9;
-  thumbnailThresholdValue = 18;
+  // thumbnailGaussianKernelSize = 9;
+  // thumbnailThresholdValue = 18;
 
-  fullsizeGaussianKernelSize = 15;
-  fullsizeThresholdValue = 50;
+  // fullsizeGaussianKernelSize = 15;
+  // fullsizeThresholdValue = 50;
 
-  thumbnailAreaDivisor = 4;
+  // thumbnailAreaDivisor = 4;
 
-  color = cv::Scalar(0, 255, 0);
+  // color = cv::Scalar(0, 255, 0);
 
-  thumbnailIsolation();
-  scaleIsollationRect();
-  fullsizeIsolation();
+  // thumbnailIsolation();
+  // scaleIsollationRect();
+  // fullsizeIsolation();
 }
 
 void Source::ProcessingTarget::thumbnailIsolation()

@@ -9,16 +9,28 @@ Source::ProcessingTarget::ProcessingTarget(std::string pathToRaw)
 {
   int ret = 0;
   LibRaw* RawProcessor = new LibRaw;
-
   thumbnailIsLikelyIsolated = false;
   subjectIsLikelyIsolated = false;
 
   thumbnailScaleFactor = 50;
   sourcePath = pathToRaw;
-  if ((ret = RawProcessor->open_file(pathToRaw)) != LIBRAW_SUCCESS)
+  const char * pathForLibraw = sourcePath.c_str();
+  if ((ret = RawProcessor->open_file(pathForLibraw)) != LIBRAW_SUCCESS)
     {
-      fprintf(stderr, "Cannot open_file %s: %s\n", av[i], libraw_strerror(ret));
+      fprintf(stderr, "Cannot open_file %s: %s\n", pathForLibraw, libraw_strerror(ret));
     }
+  int thum = RawProcessor->unpack();
+  printf("%i\n", thum);
+  // RawProcessor->unpack();
+  // RawProcessor->dcraw_process();
+  // libraw_processed_image_t *image = RawProcessor->dcraw_make_mem_image();
+
+  // puts("raw image is this wide");
+  // printf("%u", image->height);
+
+  
+  // buff = image->data()
+  // sourceImage = cv::imdecode();
   // sourceImage = cv::imread(sourcePath);
   // cv::Size sourceSize = sourceImage.size();
   // thumbnailWidth = sourceSize.width / thumbnailScaleFactor;

@@ -22,7 +22,7 @@ int main()
   NFD_Init();
 
   nfdchar_t *outPath;
-  nfdresult_t result = NFD_PickFolderN(&outPath, "~/");
+  nfdresult_t result = NFD_PickFolderN(&outPath, "/Users/ks/Desktop/testing_target/");
   std::string path;
   char buffer[1000];
 
@@ -31,18 +31,22 @@ int main()
     puts("Processing raws in selected directory");
     puts(outPath);
 
-    for (const auto &entry : std::filesystem::directory_iterator(outPath))
-    {
-      std::string filePath = entry.path();
+      std::string filePath = "/Users/ks/Desktop/testing_target/BOT_23-31-29.cr2";
 
       Source::ProcessingTarget processingTarget = Source::ProcessingTarget(filePath);
-      cv::Mat imageWithRect = processingTarget.drawFinalImageWithRect();
-      namedWindow(outPath, cv::WINDOW_NORMAL);
-      imshow(outPath, imageWithRect);
-      std::string path = std::string(outPath);
-      XmpTool::XmpWriter xmp = XmpTool::XmpWriter(filePath, processingTarget);
-      cv::waitKey(0);
-    }
+
+    // for (const auto &entry : std::filesystem::directory_iterator(outPath))
+    // {
+    //   std::string filePath = entry.path();
+
+    //   Source::ProcessingTarget processingTarget = Source::ProcessingTarget(filePath);
+      // cv::Mat imageWithRect = processingTarget.drawFinalImageWithRect();
+      // namedWindow(outPath, cv::WINDOW_NORMAL);
+      // imshow(outPath, imageWithRect);
+      // std::string path = std::string(outPath);
+      // XmpTool::XmpWriter xmp = XmpTool::XmpWriter(filePath, processingTarget);
+      // cv::waitKey(0);
+    // }
 
     NFD_FreePath(outPath);
   }

@@ -34,6 +34,7 @@ int main()
       std::string filePath = "/Users/ks/Desktop/testing_target/BOT_23-31-29.cr2";
 
       Source::ProcessingTarget processingTarget = Source::ProcessingTarget(filePath);
+      
 
     // for (const auto &entry : std::filesystem::directory_iterator(outPath))
     // {

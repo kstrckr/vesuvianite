@@ -8,48 +8,50 @@ using namespace std;
 Source::ProcessingTarget::ProcessingTarget(std::string pathToRaw)
 {
   int ret = 0;
-  LibRaw* RawProcessor = new LibRaw;
+  int i;
+  LibRaw RawProcessor;
+
   thumbnailIsLikelyIsolated = false;
   subjectIsLikelyIsolated = false;
 
   thumbnailScaleFactor = 50;
   sourcePath = pathToRaw;
   const char * pathForLibraw = sourcePath.c_str();
-  if ((ret = RawProcessor->open_file(pathForLibraw)) != LIBRAW_SUCCESS)
-    {
-      fprintf(stderr, "Cannot open_file %s: %s\n", pathForLibraw, libraw_strerror(ret));
-    }
-  int thum = RawProcessor->unpack();
-  printf("%i\n", thum);
-  // RawProcessor->unpack();
-  // RawProcessor->dcraw_process();
-  // libraw_processed_image_t *image = RawProcessor->dcraw_make_mem_image();
+  RawProcessor.open_file(pathForLibraw);
+  RawProcessor.unpack_thumb();
 
-  // puts("raw image is this wide");
-  // printf("%u", image->height);
+  uint bufsize = RawProcessor.imgdata.thumbnail.tlength;
+  cv::Mat rawData(1, bufsize, CV_8UC1, RawProcessor.imgdata.thumbnail.thumb);
+  cv::Mat sourceImage = imdecode( rawData, cv::IMREAD_COLOR);
+  if ( sourceImage.data == NULL )   
+  {
+      puts("Error reading raw file");
+  }
 
-  
-  // buff = image->data()
-  // sourceImage = cv::imdecode();
-  // sourceImage = cv::imread(sourcePath);
-  // cv::Size sourceSize = sourceImage.size();
-  // thumbnailWidth = sourceSize.width / thumbnailScaleFactor;
-  // thumbnailHeight = sourceSize.height / thumbnailScaleFactor;
-  // cv::resize(sourceImage, isolationThumbnail, cv::Size(thumbnailWidth, thumbnailHeight), 0, 0, cv::INTER_CUBIC);
 
-  // thumbnailGaussianKernelSize = 9;
-  // thumbnailThresholdValue = 18;
 
-  // fullsizeGaussianKernelSize = 15;
-  // fullsizeThresholdValue = 50;
+  cv::Size sourceSize = sourceImage.size();
+  thumbnailWidth = sourceSize.width / thumbnailScaleFactor;
+  thumbnailHeight = sourceSize.height / thumbnailScaleFactor;
+  cv::resize(sourceImage, isolationThumbnail, cv::Size(thumbnailWidth, thumbnailHeight), 0, 0, cv::INTER_CUBIC);
 
-  // thumbnailAreaDivisor = 4;
+  // namedWindow("jpg from buffer", cv::WINDOW_NORMAL);
+  // imshow("jpg from buffer", isolationThumbnail);
+  // cv::waitKey(0);
 
-  // color = cv::Scalar(0, 255, 0);
+  thumbnailGaussianKernelSize = 9;
+  thumbnailThresholdValue = 18;
 
-  // thumbnailIsolation();
-  // scaleIsollationRect();
-  // fullsizeIsolation();
+  fullsizeGaussianKernelSize = 15;
+  fullsizeThresholdValue = 50;
+
+  thumbnailAreaDivisor = 4;
+
+  color = cv::Scalar(0, 255, 0);
+
+  thumbnailIsolation();
+  scaleIsollationRect();
+  fullsizeIsolation();
 }
 
 void Source::ProcessingTarget::thumbnailIsolation()
@@ -158,50 +160,51 @@ void Source::ProcessingTarget::fullsizeIsolation()
     fullIsolationBounding.height = rawSize.height - fullIsolationBounding.y;
   }
 
+  printf("%i x %i", fullIsolationBounding.width, fullIsolationBounding.height);
   cv::Mat isolatedROI(sourceImage, fullIsolationBounding);
-  cv::cvtColor(isolatedROI, src_gray, cv::COLOR_BGR2GRAY);
-  cv::GaussianBlur(src_gray, blurred_grey, cv::Size(fullsizeGaussianKernelSize, fullsizeGaussianKernelSize), 0);
+  // cv::cvtColor(isolatedROI, src_gray, cv::COLOR_BGR2GRAY);
+  // cv::GaussianBlur(src_gray, blurred_grey, cv::Size(fullsizeGaussianKernelSize, fullsizeGaussianKernelSize), 0);
 
-  cv::Canny(blurred_grey, canny_output, fullsizeThresholdValue, fullsizeThresholdValue * 2);
+  // cv::Canny(blurred_grey, canny_output, fullsizeThresholdValue, fullsizeThresholdValue * 2);
 
-  vector<vector<cv::Point>> contours;
-  vector<cv::Vec4i> hierarchy;
-  findContours(canny_output, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
+  // vector<vector<cv::Point>> contours;
+  // vector<cv::Vec4i> hierarchy;
+  // findContours(canny_output, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
 
-  vector<vector<cv::Point>> hull(hierarchy.size());
-  vector<cv::RotatedRect> minRect(hull.size());
+  // vector<vector<cv::Point>> hull(hierarchy.size());
+  // vector<cv::RotatedRect> minRect(hull.size());
 
-  cv::RotatedRect rotatedRectInROI;
+  // cv::RotatedRect rotatedRectInROI;
 
-  for (size_t i = 0; i < hierarchy.size(); i++)
-  {
-    convexHull(contours[i], hull[i]);
-    minRect[i] = minAreaRect(hull[i]);
-    if (minRect[i].size.area() >= fullIsolationBounding.area() * 0.66)
-    {
-      cv::Point2f rect_points[4];
-      minRect[i].points(rect_points);
-      rotatedRectInROI = minRect[i];
-      // for (int j = 0; j < 4; j++)
-      // {
-      //   line(isolatedROI, rect_points[j], rect_points[(j + 1) % 4], cv::Scalar(0, 255, 0), 25);
-      // }
+  // for (size_t i = 0; i < hierarchy.size(); i++)
+  // {
+  //   convexHull(contours[i], hull[i]);
+  //   minRect[i] = minAreaRect(hull[i]);
+  //   if (minRect[i].size.area() >= fullIsolationBounding.area() * 0.66)
+  //   {
+  //     cv::Point2f rect_points[4];
+  //     minRect[i].points(rect_points);
+  //     rotatedRectInROI = minRect[i];
+  //     // for (int j = 0; j < 4; j++)
+  //     // {
+  //     //   line(isolatedROI, rect_points[j], rect_points[(j + 1) % 4], cv::Scalar(0, 255, 0), 25);
+  //     // }
 
-      break;
-    }
-  }
+  //     break;
+  //   }
+  // }
 
-    cv::Point2f scaledCenter = cv::Point2f(
-      rotatedRectInROI.center.x + fullIsolationBounding.x,
-      rotatedRectInROI.center.y + fullIsolationBounding.y
-    );
+  //   cv::Point2f scaledCenter = cv::Point2f(
+  //     rotatedRectInROI.center.x + fullIsolationBounding.x,
+  //     rotatedRectInROI.center.y + fullIsolationBounding.y
+  //   );
 
-  finalSubjectRectrangle = cv::RotatedRect(scaledCenter, rotatedRectInROI.size, rotatedRectInROI.angle);
-  cv::Size cropSize = finalSubjectRectrangle.size;
-  cv::Size originalSize = sourceImage.size();
-  cropLeft = (finalSubjectRectrangle.center.x - (0.5 *  cropSize.width)) / originalSize.width;
-  cropTop = (finalSubjectRectrangle.center.y - (0.5 *  cropSize.height)) / originalSize.height;
-  cropRight = (finalSubjectRectrangle.center.x + (0.5 *  cropSize.width)) / originalSize.width;
-  cropBottom = (finalSubjectRectrangle.center.y + (0.5 *  cropSize.height)) / originalSize.height;
-  cropAngle = rotatedRectInROI.angle;
+  // finalSubjectRectrangle = cv::RotatedRect(scaledCenter, rotatedRectInROI.size, rotatedRectInROI.angle);
+  // cv::Size cropSize = finalSubjectRectrangle.size;
+  // cv::Size originalSize = sourceImage.size();
+  // cropLeft = (finalSubjectRectrangle.center.x - (0.5 *  cropSize.width)) / originalSize.width;
+  // cropTop = (finalSubjectRectrangle.center.y - (0.5 *  cropSize.height)) / originalSize.height;
+  // cropRight = (finalSubjectRectrangle.center.x + (0.5 *  cropSize.width)) / originalSize.width;
+  // cropBottom = (finalSubjectRectrangle.center.y + (0.5 *  cropSize.height)) / originalSize.height;
+  // cropAngle = rotatedRectInROI.angle;
 };

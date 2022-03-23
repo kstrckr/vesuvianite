@@ -22,7 +22,7 @@ Source::ProcessingTarget::ProcessingTarget(std::string pathToRaw)
 
   uint bufsize = RawProcessor.imgdata.thumbnail.tlength;
   cv::Mat rawData(1, bufsize, CV_8UC1, RawProcessor.imgdata.thumbnail.thumb);
-  cv::Mat sourceImage = imdecode( rawData, cv::IMREAD_COLOR);
+  imdecode(rawData, cv::IMREAD_COLOR, &sourceImage);
   if ( sourceImage.data == NULL )   
   {
       puts("Error reading raw file");
@@ -160,51 +160,50 @@ void Source::ProcessingTarget::fullsizeIsolation()
     fullIsolationBounding.height = rawSize.height - fullIsolationBounding.y;
   }
 
-  printf("%i x %i", fullIsolationBounding.width, fullIsolationBounding.height);
   cv::Mat isolatedROI(sourceImage, fullIsolationBounding);
-  // cv::cvtColor(isolatedROI, src_gray, cv::COLOR_BGR2GRAY);
-  // cv::GaussianBlur(src_gray, blurred_grey, cv::Size(fullsizeGaussianKernelSize, fullsizeGaussianKernelSize), 0);
+  cv::cvtColor(isolatedROI, src_gray, cv::COLOR_BGR2GRAY);
+  cv::GaussianBlur(src_gray, blurred_grey, cv::Size(fullsizeGaussianKernelSize, fullsizeGaussianKernelSize), 0);
 
-  // cv::Canny(blurred_grey, canny_output, fullsizeThresholdValue, fullsizeThresholdValue * 2);
+  cv::Canny(blurred_grey, canny_output, fullsizeThresholdValue, fullsizeThresholdValue * 2);
 
-  // vector<vector<cv::Point>> contours;
-  // vector<cv::Vec4i> hierarchy;
-  // findContours(canny_output, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
+  vector<vector<cv::Point>> contours;
+  vector<cv::Vec4i> hierarchy;
+  findContours(canny_output, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
 
-  // vector<vector<cv::Point>> hull(hierarchy.size());
-  // vector<cv::RotatedRect> minRect(hull.size());
+  vector<vector<cv::Point>> hull(hierarchy.size());
+  vector<cv::RotatedRect> minRect(hull.size());
 
-  // cv::RotatedRect rotatedRectInROI;
+  cv::RotatedRect rotatedRectInROI;
 
-  // for (size_t i = 0; i < hierarchy.size(); i++)
-  // {
-  //   convexHull(contours[i], hull[i]);
-  //   minRect[i] = minAreaRect(hull[i]);
-  //   if (minRect[i].size.area() >= fullIsolationBounding.area() * 0.66)
-  //   {
-  //     cv::Point2f rect_points[4];
-  //     minRect[i].points(rect_points);
-  //     rotatedRectInROI = minRect[i];
-  //     // for (int j = 0; j < 4; j++)
-  //     // {
-  //     //   line(isolatedROI, rect_points[j], rect_points[(j + 1) % 4], cv::Scalar(0, 255, 0), 25);
-  //     // }
+  for (size_t i = 0; i < hierarchy.size(); i++)
+  {
+    convexHull(contours[i], hull[i]);
+    minRect[i] = minAreaRect(hull[i]);
+    if (minRect[i].size.area() >= fullIsolationBounding.area() * 0.66)
+    {
+      cv::Point2f rect_points[4];
+      minRect[i].points(rect_points);
+      rotatedRectInROI = minRect[i];
+      // for (int j = 0; j < 4; j++)
+      // {
+      //   line(isolatedROI, rect_points[j], rect_points[(j + 1) % 4], cv::Scalar(0, 255, 0), 25);
+      // }
 
-  //     break;
-  //   }
-  // }
+      break;
+    }
+  }
 
-  //   cv::Point2f scaledCenter = cv::Point2f(
-  //     rotatedRectInROI.center.x + fullIsolationBounding.x,
-  //     rotatedRectInROI.center.y + fullIsolationBounding.y
-  //   );
+    cv::Point2f scaledCenter = cv::Point2f(
+      rotatedRectInROI.center.x + fullIsolationBounding.x,
+      rotatedRectInROI.center.y + fullIsolationBounding.y
+    );
 
-  // finalSubjectRectrangle = cv::RotatedRect(scaledCenter, rotatedRectInROI.size, rotatedRectInROI.angle);
-  // cv::Size cropSize = finalSubjectRectrangle.size;
-  // cv::Size originalSize = sourceImage.size();
-  // cropLeft = (finalSubjectRectrangle.center.x - (0.5 *  cropSize.width)) / originalSize.width;
-  // cropTop = (finalSubjectRectrangle.center.y - (0.5 *  cropSize.height)) / originalSize.height;
-  // cropRight = (finalSubjectRectrangle.center.x + (0.5 *  cropSize.width)) / originalSize.width;
-  // cropBottom = (finalSubjectRectrangle.center.y + (0.5 *  cropSize.height)) / originalSize.height;
-  // cropAngle = rotatedRectInROI.angle;
+  finalSubjectRectrangle = cv::RotatedRect(scaledCenter, rotatedRectInROI.size, rotatedRectInROI.angle);
+  cv::Size cropSize = finalSubjectRectrangle.size;
+  cv::Size originalSize = sourceImage.size();
+  cropLeft = (finalSubjectRectrangle.center.x - (0.5 *  cropSize.width)) / originalSize.width;
+  cropTop = (finalSubjectRectrangle.center.y - (0.5 *  cropSize.height)) / originalSize.height;
+  cropRight = (finalSubjectRectrangle.center.x + (0.5 *  cropSize.width)) / originalSize.width;
+  cropBottom = (finalSubjectRectrangle.center.y + (0.5 *  cropSize.height)) / originalSize.height;
+  cropAngle = rotatedRectInROI.angle;
 };

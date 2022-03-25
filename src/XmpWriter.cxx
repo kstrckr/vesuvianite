@@ -101,7 +101,7 @@ XmpTool::XmpWriter::XmpWriter(std::string pathToRaw, Source::ProcessingTarget pr
     cropAngle = processedSource.cropAngle;
     hasCrop = true;
   } else {
-    label = "red";
+    label = "Red";
     hasCrop = false;
   }
 

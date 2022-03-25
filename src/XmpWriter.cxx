@@ -13,8 +13,8 @@
 #define MAC_ENV 1
 // #define UNIX_ENV 1
 
-#include <XMP.incl_cpp> //include in EXACTLY one source file (i.e. main, in Action gets you trouble...
-#include <XMP.hpp>      //NB: no XMP.incl_cpp here on purpose, gets compiled in main...
+#include <XMP.incl_cpp>
+#include <XMP.hpp>
 #include <XMP_Const.h>
 
 #include <vesuvianite/XmpWriter.hpp>
@@ -64,7 +64,7 @@ int XmpTool::XmpWriter::ProcessFile(std::string pathToRaw)
   }
 
 
-  xmpFile.CloseFile(generalCloseFlags); //(enabled again now that bug 1352603 is fixed)
+  xmpFile.CloseFile(generalCloseFlags);
   return 0;
 }
 

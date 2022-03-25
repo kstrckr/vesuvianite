@@ -7,51 +7,55 @@ using namespace std;
 
 Source::ProcessingTarget::ProcessingTarget(std::string pathToRaw)
 {
+  // int i;
   int ret = 0;
-  int i;
-  LibRaw RawProcessor;
-
   thumbnailIsLikelyIsolated = false;
   subjectIsLikelyIsolated = false;
 
-  thumbnailScaleFactor = 50;
+  LibRaw RawProcessor;
+
   sourcePath = pathToRaw;
+
+  // pull jpeg thumbnail from raw file
   const char * pathForLibraw = sourcePath.c_str();
   RawProcessor.open_file(pathForLibraw);
   RawProcessor.unpack_thumb();
 
+  // convert in-memory thumbnail into opencv Mat
   uint bufsize = RawProcessor.imgdata.thumbnail.tlength;
   cv::Mat rawData(1, bufsize, CV_8UC1, RawProcessor.imgdata.thumbnail.thumb);
   imdecode(rawData, cv::IMREAD_COLOR, &sourceImage);
-  if ( sourceImage.data == NULL )   
+  if ( sourceImage.data == NULL )
   {
       puts("Error reading raw file");
   }
 
-
-
   cv::Size sourceSize = sourceImage.size();
+
+  thumbnailScaleFactor = 25;
+  thumbnailAreaDivisor = 4;
+
   thumbnailWidth = sourceSize.width / thumbnailScaleFactor;
   thumbnailHeight = sourceSize.height / thumbnailScaleFactor;
   cv::resize(sourceImage, isolationThumbnail, cv::Size(thumbnailWidth, thumbnailHeight), 0, 0, cv::INTER_CUBIC);
 
-  // namedWindow("jpg from buffer", cv::WINDOW_NORMAL);
+  // namedWindow("isolationThumbnail jpg from buffer", cv::WINDOW_NORMAL);
   // imshow("jpg from buffer", isolationThumbnail);
   // cv::waitKey(0);
 
-  thumbnailGaussianKernelSize = 9;
+  thumbnailGaussianKernelSize = 5;
   thumbnailThresholdValue = 18;
 
   fullsizeGaussianKernelSize = 15;
   fullsizeThresholdValue = 50;
 
-  thumbnailAreaDivisor = 4;
-
-  color = cv::Scalar(0, 255, 0);
+  lineColor = cv::Scalar(0, 255, 0);
 
   thumbnailIsolation();
-  scaleIsollationRect();
-  fullsizeIsolation();
+  if (thumbnailIsLikelyIsolated) {
+    scaleIsollationRect();
+    fullsizeIsolation();
+  }
 }
 
 void Source::ProcessingTarget::thumbnailIsolation()
@@ -70,7 +74,9 @@ void Source::ProcessingTarget::thumbnailIsolation()
   }
   for (size_t i = 0; i < contours.size(); i++)
   {
-    if ((minRect[i].size.width * minRect[i].size.height) >= ((thumbnailHeight * thumbnailWidth) / thumbnailAreaDivisor))
+    // printf("angle %f\n", minRect[i].angle);
+    if ((abs(minRect[i].angle) <= 20 || abs(minRect[i].angle) >= 80)
+      && (minRect[i].size.width * minRect[i].size.height) >= ((thumbnailHeight * thumbnailWidth) / thumbnailAreaDivisor))
     {
       cv::Point2f rect_points[4];
       minRect[i].points(rect_points);
@@ -79,6 +85,7 @@ void Source::ProcessingTarget::thumbnailIsolation()
       break;
     }
   }
+  printf("\nthumbnailIsLikelyIsolated %i\n", thumbnailIsLikelyIsolated);
 };
 
 void Source::ProcessingTarget::scaleIsollationRect()
@@ -94,7 +101,7 @@ void Source::ProcessingTarget::scaleIsollationRect()
       (thumbnailSubjectRectangle.size.width / thumbnailWidth * baseSize.width) + 0.005 * baseSize.width,
       (thumbnailSubjectRectangle.size.height / thumbnailHeight * baseSize.height) + 0.005 * baseSize.width);
   scaledRotatedRect = cv::RotatedRect(scaledCenter, scaledSize, thumbnailSubjectRectangle.angle);
-  cv::Scalar color = cv::Scalar(0, 255, 0);
+  // cv::Scalar lineColor = cv::Scalar(0, 255, 0);
   cv::Point2f scaled_points[4];
   // scaledRotatedRect.points(scaled_points);
   cv::Rect boundingRect = scaledRotatedRect.boundingRect();
@@ -109,7 +116,7 @@ cv::Mat Source::ProcessingTarget::drawThumbnailWithRect()
   thumbnailSubjectRectangle.points(rect_points);
   for (int j = 0; j < 4; j++)
   {
-    cv::line(clonedThumbnail, rect_points[j], rect_points[(j + 1) % 4], color);
+    cv::line(clonedThumbnail, rect_points[j], rect_points[(j + 1) % 4], lineColor);
   }
   return clonedThumbnail;
 }
@@ -121,7 +128,7 @@ cv::Mat Source::ProcessingTarget::drawFullImageWithRect()
   fullIsolationRotatedRect.points(rect_points);
   for (int j = 0; j < 4; j++)
   {
-    cv::line(clonedFullImage, rect_points[j], rect_points[(j + 1) % 4], color, 8);
+    cv::line(clonedFullImage, rect_points[j], rect_points[(j + 1) % 4], lineColor, 8);
   }
   return clonedFullImage;
 }
@@ -133,7 +140,7 @@ cv::Mat Source::ProcessingTarget::drawFinalImageWithRect()
   finalSubjectRectrangle.points(rect_points);
   for (int j = 0; j < 4; j++)
   {
-    cv::line(clonedFullImage, rect_points[j], rect_points[(j + 1) % 4], color, 8);
+    cv::line(clonedFullImage, rect_points[j], rect_points[(j + 1) % 4], lineColor, 8);
   }
   return clonedFullImage;
 }
@@ -179,11 +186,13 @@ void Source::ProcessingTarget::fullsizeIsolation()
   {
     convexHull(contours[i], hull[i]);
     minRect[i] = minAreaRect(hull[i]);
-    if (minRect[i].size.area() >= fullIsolationBounding.area() * 0.66)
+    if ((abs(minRect[i].angle) <= 20 || abs(minRect[i].angle) >= 80)
+      && minRect[i].size.area() >= fullIsolationBounding.area() * 0.66)
     {
       cv::Point2f rect_points[4];
       minRect[i].points(rect_points);
       rotatedRectInROI = minRect[i];
+      subjectIsLikelyIsolated = true;
       // for (int j = 0; j < 4; j++)
       // {
       //   line(isolatedROI, rect_points[j], rect_points[(j + 1) % 4], cv::Scalar(0, 255, 0), 25);
@@ -193,10 +202,10 @@ void Source::ProcessingTarget::fullsizeIsolation()
     }
   }
 
-    cv::Point2f scaledCenter = cv::Point2f(
-      rotatedRectInROI.center.x + fullIsolationBounding.x,
-      rotatedRectInROI.center.y + fullIsolationBounding.y
-    );
+  cv::Point2f scaledCenter = cv::Point2f(
+    rotatedRectInROI.center.x + fullIsolationBounding.x,
+    rotatedRectInROI.center.y + fullIsolationBounding.y
+  );
 
   finalSubjectRectrangle = cv::RotatedRect(scaledCenter, rotatedRectInROI.size, rotatedRectInROI.angle);
   cv::Size cropSize = finalSubjectRectrangle.size;
@@ -206,4 +215,6 @@ void Source::ProcessingTarget::fullsizeIsolation()
   cropRight = (finalSubjectRectrangle.center.x + (0.5 *  cropSize.width)) / originalSize.width;
   cropBottom = (finalSubjectRectrangle.center.y + (0.5 *  cropSize.height)) / originalSize.height;
   cropAngle = rotatedRectInROI.angle;
+  printf("subjectIsLikelyIsolated   %i\n\n", subjectIsLikelyIsolated);
+
 };

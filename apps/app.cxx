@@ -22,7 +22,7 @@ int main()
   NFD_Init();
 
   nfdchar_t *outPath;
-  nfdresult_t result = NFD_PickFolderN(&outPath, "/");
+  nfdresult_t result = NFD_PickFolderN(&outPath, "/Users/ks/proj/t2t_samples/big_batch_o_test_files");
   std::string path;
   char buffer[1000];
 
@@ -30,18 +30,25 @@ int main()
   {
     puts("Processing raws in selected directory");
     puts(outPath);
+    namedWindow(outPath, cv::WINDOW_NORMAL);
 
     for (const auto &entry : std::filesystem::directory_iterator(outPath))
     {
       std::string filePath = entry.path();
 
       Source::ProcessingTarget processingTarget = Source::ProcessingTarget(filePath);
-      cv::Mat imageWithRect = processingTarget.drawFinalImageWithRect();
-      namedWindow(outPath, cv::WINDOW_NORMAL);
-      imshow(outPath, imageWithRect);
-      std::string path = std::string(outPath);
-      XmpTool::XmpWriter xmp = XmpTool::XmpWriter(filePath, processingTarget);
-      cv::waitKey(0);
+      if (processingTarget.thumbnailIsLikelyIsolated) {
+        cv::Mat thumbnailWithRect = processingTarget.drawThumbnailWithRect();
+        // imshow(outPath, thumbnailWithRect);
+        // cv::waitKey(0);
+        if (processingTarget.subjectIsLikelyIsolated) {
+          cv::Mat imageWithRect = processingTarget.drawFinalImageWithRect();
+          imshow(outPath, imageWithRect);
+          cv::waitKey(0);
+          std::string path = std::string(outPath);
+          XmpTool::XmpWriter xmp = XmpTool::XmpWriter(filePath, processingTarget);
+        }
+      }
     }
 
     NFD_FreePath(outPath);
@@ -56,18 +63,6 @@ int main()
   }
 
   NFD_Quit();
-
-  // image = imageProc::loadRaw("/home/a/proj/vesuvianite/ideal-target-batch-1/CD.32.2197.cr2");
-
-  // Source::ProcessingTarget processingTarget = Source::ProcessingTarget("/home/a/proj/vesuvianite/ideal-target-batch-1/CD.32.2197.cr2");
-  // cv::Mat thumbnailWithRect = processingTarget.drawRect();
-  // namedWindow("IsolateSubject", cv::WINDOW_NORMAL);
-  // imshow("IsolateSubject", thumbnailWithRect);
-  // cv::waitKey(0);
-
-  // isolationSource = IsolateSubject::isolate(image);
-  // placementData = GetScaledIsolationRect::getScaledRectAndBound(image, isolationSource);
-  // cvxHull::convexHull(placementData, image);
 
   return 0;
 }

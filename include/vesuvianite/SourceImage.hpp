@@ -36,7 +36,7 @@ namespace Source
     float cropAngle;
 
   private:
-    cv::Scalar color;
+    cv::Scalar lineColor;
     int thumbnailScaleFactor;
     int thumbnailWidth;
     int thumbnailHeight;

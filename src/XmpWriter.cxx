@@ -49,13 +49,18 @@ int XmpTool::XmpWriter::ProcessFile(std::string pathToRaw)
   // Log::warn("file contains no XMP. - says xmpFile.GetXMP()");
   else
   {
-    xmpMeta.SetProperty("http://ns.adobe.com/camera-raw-settings/1.0/", "CropTop", std::to_string(cropTop));
-    xmpMeta.SetProperty("http://ns.adobe.com/camera-raw-settings/1.0/", "CropLeft", std::to_string(cropLeft));
-    xmpMeta.SetProperty("http://ns.adobe.com/camera-raw-settings/1.0/", "CropBottom", std::to_string(cropBottom));
-    xmpMeta.SetProperty("http://ns.adobe.com/camera-raw-settings/1.0/", "CropRight", std::to_string(cropRight));
-    xmpMeta.SetProperty("http://ns.adobe.com/camera-raw-settings/1.0/", "CropAngle", std::to_string(cropAngle));
-    xmpMeta.SetProperty("http://ns.adobe.com/camera-raw-settings/1.0/", "CropConstrainToWarp", "0");
-    xmpMeta.SetProperty("http://ns.adobe.com/camera-raw-settings/1.0/", "HasCrop", "True");
+    if (hasCrop) {
+      xmpMeta.SetProperty("http://ns.adobe.com/camera-raw-settings/1.0/", "CropTop", std::to_string(cropTop));
+      xmpMeta.SetProperty("http://ns.adobe.com/camera-raw-settings/1.0/", "CropLeft", std::to_string(cropLeft));
+      xmpMeta.SetProperty("http://ns.adobe.com/camera-raw-settings/1.0/", "CropBottom", std::to_string(cropBottom));
+      xmpMeta.SetProperty("http://ns.adobe.com/camera-raw-settings/1.0/", "CropRight", std::to_string(cropRight));
+      xmpMeta.SetProperty("http://ns.adobe.com/camera-raw-settings/1.0/", "CropAngle", std::to_string(cropAngle));
+      xmpMeta.SetProperty("http://ns.adobe.com/camera-raw-settings/1.0/", "CropConstrainToWarp", "0");
+      xmpMeta.SetProperty("http://ns.adobe.com/camera-raw-settings/1.0/", "HasCrop", "True");
+    } else {
+      xmpMeta.SetProperty("http://ns.adobe.com/xap/1.0/", "Label", "red");
+    }
+
 
     XMP_OptionBits outOpts = kXMP_OmitPacketWrapper | kXMP_UseCanonicalFormat;
     xmpMeta.SerializeToBuffer(&xmpDump, outOpts);
@@ -88,12 +93,18 @@ XmpTool::XmpWriter::XmpWriter(std::string pathToRaw, Source::ProcessingTarget pr
     exit(1);
   }
   const char *path = pathToRaw.c_str();
+  if (processedSource.thumbnailIsLikelyIsolated && processedSource.subjectIsLikelyIsolated) {
+    cropLeft = processedSource.cropLeft;
+    cropRight = processedSource.cropRight;
+    cropTop = processedSource.cropTop;
+    cropBottom = processedSource.cropBottom;
+    cropAngle = processedSource.cropAngle;
+    hasCrop = true;
+  } else {
+    label = "red";
+    hasCrop = false;
+  }
 
-  cropLeft = processedSource.cropLeft;
-  cropRight = processedSource.cropRight;
-  cropTop = processedSource.cropTop;
-  cropBottom = processedSource.cropBottom;
-  cropAngle = processedSource.cropAngle;
 
   int len = strlen(path);
   outPathString = pathToRaw.substr(0, len - 4);

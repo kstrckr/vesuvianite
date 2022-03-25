@@ -16,6 +16,8 @@ namespace XmpTool
       float cropTop;
       float cropBottom;
       float cropAngle;
+      bool hasCrop;
+      std::string label;
       std::string outPathString;
   };
 }

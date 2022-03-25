@@ -38,17 +38,18 @@ int main()
 
       Source::ProcessingTarget processingTarget = Source::ProcessingTarget(filePath);
       if (processingTarget.thumbnailIsLikelyIsolated) {
-        cv::Mat thumbnailWithRect = processingTarget.drawThumbnailWithRect();
+        // cv::Mat thumbnailWithRect = processingTarget.drawThumbnailWithRect();
         // imshow(outPath, thumbnailWithRect);
         // cv::waitKey(0);
         if (processingTarget.subjectIsLikelyIsolated) {
-          cv::Mat imageWithRect = processingTarget.drawFinalImageWithRect();
-          imshow(outPath, imageWithRect);
-          cv::waitKey(0);
-          std::string path = std::string(outPath);
-          XmpTool::XmpWriter xmp = XmpTool::XmpWriter(filePath, processingTarget);
+          // cv::Mat imageWithRect = processingTarget.drawFinalImageWithRect();
+          // imshow(outPath, imageWithRect);
+          // cv::waitKey(0);
         }
       }
+      std::string path = std::string(outPath);
+      XmpTool::XmpWriter xmp = XmpTool::XmpWriter(filePath, processingTarget);
+
     }
 
     NFD_FreePath(outPath);

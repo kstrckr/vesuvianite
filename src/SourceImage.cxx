@@ -210,10 +210,16 @@ void Source::ProcessingTarget::fullsizeIsolation()
   finalSubjectRectrangle = cv::RotatedRect(scaledCenter, rotatedRectInROI.size, rotatedRectInROI.angle);
   cv::Size cropSize = finalSubjectRectrangle.size;
   cv::Size originalSize = sourceImage.size();
-  cropLeft = (finalSubjectRectrangle.center.x - (0.5 *  cropSize.width)) / originalSize.width;
-  cropTop = (finalSubjectRectrangle.center.y - (0.5 *  cropSize.height)) / originalSize.height;
-  cropRight = (finalSubjectRectrangle.center.x + (0.5 *  cropSize.width)) / originalSize.width;
-  cropBottom = (finalSubjectRectrangle.center.y + (0.5 *  cropSize.height)) / originalSize.height;
+  cv::Point2f vtx[4];
+  finalSubjectRectrangle.points(vtx); // bottomLeft, topLeft, topRight, bottomRight
+  // topLeft and bottomRight are the only coordinates that matter for xmp
+  cv::Point2f topLeft = vtx[1];
+  cv::Point2f bottomRight = vtx[3];
+  cropTop = topLeft.y / originalSize.height;
+  cropLeft = topLeft.x / originalSize.width;
+
+  cropBottom = bottomRight.y / originalSize.height;
+  cropRight = bottomRight.x / originalSize.width;
   cropAngle = rotatedRectInROI.angle;
   printf("subjectIsLikelyIsolated   %i\n\n", subjectIsLikelyIsolated);
 

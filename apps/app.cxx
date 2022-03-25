@@ -35,21 +35,23 @@ int main()
     for (const auto &entry : std::filesystem::directory_iterator(outPath))
     {
       std::string filePath = entry.path();
-
-      Source::ProcessingTarget processingTarget = Source::ProcessingTarget(filePath);
-      if (processingTarget.thumbnailIsLikelyIsolated) {
-        // cv::Mat thumbnailWithRect = processingTarget.drawThumbnailWithRect();
-        // imshow(outPath, thumbnailWithRect);
-        // cv::waitKey(0);
-        if (processingTarget.subjectIsLikelyIsolated) {
-          // cv::Mat imageWithRect = processingTarget.drawFinalImageWithRect();
-          // imshow(outPath, imageWithRect);
+      int position=filePath.find_last_of(".");
+      std::string extension = filePath.substr(position+1);
+      if (extension == "cr2") {
+        Source::ProcessingTarget processingTarget = Source::ProcessingTarget(filePath);
+        if (processingTarget.thumbnailIsLikelyIsolated) {
+          // cv::Mat thumbnailWithRect = processingTarget.drawThumbnailWithRect();
+          // imshow(outPath, thumbnailWithRect);
           // cv::waitKey(0);
+          if (processingTarget.subjectIsLikelyIsolated) {
+            // cv::Mat imageWithRect = processingTarget.drawFinalImageWithRect();
+            // imshow(outPath, imageWithRect);
+            // cv::waitKey(0);
+            std::string path = std::string(outPath);
+            XmpTool::XmpWriter xmp = XmpTool::XmpWriter(filePath, processingTarget);
+          }
         }
       }
-      std::string path = std::string(outPath);
-      XmpTool::XmpWriter xmp = XmpTool::XmpWriter(filePath, processingTarget);
-
     }
 
     NFD_FreePath(outPath);

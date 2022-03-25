@@ -58,7 +58,7 @@ int XmpTool::XmpWriter::ProcessFile(std::string pathToRaw)
       xmpMeta.SetProperty("http://ns.adobe.com/camera-raw-settings/1.0/", "CropConstrainToWarp", "0");
       xmpMeta.SetProperty("http://ns.adobe.com/camera-raw-settings/1.0/", "HasCrop", "True");
     } else {
-      xmpMeta.SetProperty("http://ns.adobe.com/xap/1.0/", "Label", "red");
+      xmpMeta.SetProperty("http://ns.adobe.com/xap/1.0/", "Label", "Red");
     }
 
 

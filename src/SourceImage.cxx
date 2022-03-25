@@ -215,11 +215,11 @@ void Source::ProcessingTarget::fullsizeIsolation()
   // topLeft and bottomRight are the only coordinates that matter for xmp
   cv::Point2f topLeft = vtx[1];
   cv::Point2f bottomRight = vtx[3];
-  cropTop = topLeft.y / originalSize.height;
-  cropLeft = topLeft.x / originalSize.width;
+  cropTop = (topLeft.y + 3.0) / originalSize.height;
+  cropLeft = (topLeft.x + 3.0) / originalSize.width;
 
-  cropBottom = bottomRight.y / originalSize.height;
-  cropRight = bottomRight.x / originalSize.width;
+  cropBottom = (bottomRight.y + 3.0) / originalSize.height;
+  cropRight = (bottomRight.x + 3.0) / originalSize.width;
   cropAngle = rotatedRectInROI.angle;
   printf("subjectIsLikelyIsolated   %i\n\n", subjectIsLikelyIsolated);
 

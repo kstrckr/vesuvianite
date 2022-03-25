@@ -22,7 +22,7 @@ int main()
   NFD_Init();
 
   nfdchar_t *outPath;
-  nfdresult_t result = NFD_PickFolderN(&outPath, "/Users/ks/proj/t2t_samples/big_batch_o_test_files");
+  nfdresult_t result = NFD_PickFolderN(&outPath, "/");
   std::string path;
   char buffer[1000];
 

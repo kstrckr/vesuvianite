@@ -40,7 +40,10 @@ int main()
       if (extension == "cr2") {
         Source::ProcessingTarget processingTarget = Source::ProcessingTarget(filePath);
         if (processingTarget.thumbnailIsLikelyIsolated) {
-          // cv::Mat thumbnailWithRect = processingTarget.drawThumbnailWithRect();
+          cv::Mat thumbnailWithRect = processingTarget.drawThumbnailWithRect();
+          // cv::imwrite(filePath + ".jpg", thumbnailWithRect);
+          // cv::Mat imageWithRect = processingTarget.drawFinalImageWithRect();
+          // cv::imwrite(filePath + "_full.jpg", imageWithRect);
           // imshow(outPath, thumbnailWithRect);
           // cv::waitKey(0);
           if (processingTarget.subjectIsLikelyIsolated) {

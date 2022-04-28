@@ -220,7 +220,11 @@ void Source::ProcessingTarget::fullsizeIsolation()
 
   cropBottom = (bottomRight.y + 10.0) / originalSize.height;
   cropRight = (bottomRight.x + 10.0) / originalSize.width;
-  cropAngle = rotatedRectInROI.angle;
+  if (rotatedRectInROI.angle > 45) {
+    cropAngle = rotatedRectInROI.angle - 90;
+  } else {
+    cropAngle = rotatedRectInROI.angle;
+  }
   printf("subjectIsLikelyIsolated   %i\n\n", subjectIsLikelyIsolated);
 
 };

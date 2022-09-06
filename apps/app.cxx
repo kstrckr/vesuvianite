@@ -30,7 +30,7 @@ int main()
   {
     puts("Processing raws in selected directory");
     puts(outPath);
-    namedWindow(outPath, cv::WINDOW_NORMAL);
+    // namedWindow(outPath, cv::WINDOW_NORMAL);
 
     for (const auto &entry : std::filesystem::directory_iterator(outPath))
     {
@@ -40,18 +40,18 @@ int main()
       if (extension == "cr2") {
         Source::ProcessingTarget processingTarget = Source::ProcessingTarget(filePath);
         if (processingTarget.thumbnailIsLikelyIsolated) {
-          cv::Mat thumbnailWithRect = processingTarget.drawThumbnailWithRect();
+          // cv::Mat thumbnailWithRect = processingTarget.drawThumbnailWithRect();
           // cv::imwrite(filePath + ".jpg", thumbnailWithRect);
           // cv::Mat imageWithRect = processingTarget.drawFinalImageWithRect();
           // cv::imwrite(filePath + "_full.jpg", imageWithRect);
           // imshow(outPath, thumbnailWithRect);
           // cv::waitKey(0);
           if (processingTarget.subjectIsLikelyIsolated) {
-            // cv::Mat imageWithRect = processingTarget.drawFinalImageWithRect();
-            // imshow(outPath, imageWithRect);
-            // cv::waitKey(0);
+            cv::Mat imageWithRect = processingTarget.drawFinalImageWithRect();
+            imshow(outPath, imageWithRect);
+            cv::waitKey(0);
             std::string path = std::string(outPath);
-            XmpTool::XmpWriter xmp = XmpTool::XmpWriter(filePath, processingTarget);
+            // XmpTool::XmpWriter xmp = XmpTool::XmpWriter(filePath, processingTarget);
           }
         }
       }

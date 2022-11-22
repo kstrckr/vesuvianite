@@ -7,7 +7,7 @@ namespace XmpTool
   class XmpWriter
   {
     public:
-      XmpWriter(std::string pathToRaw, Source::ProcessingTarget processedSource);
+      XmpWriter(std::string pathToRaw, Source::ProcessingTarget processedSource, std::string profileName);
       int ProcessFile (const std::string pathToRaw);
       int WriteXmp(std::string xmpRawText);
     private:

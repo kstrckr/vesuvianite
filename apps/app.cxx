@@ -27,6 +27,7 @@ int main(int argc, char **argv)
   // char buffer[1000];
 
   std::string outPath = std::filesystem::u8path(argv[1]);
+  std::string profileName = std::filesystem::u8path(argv[2]);
 
   printf("Processing raws in selected directory");
   // namedWindow(outPath, cv::WINDOW_NORMAL);
@@ -34,26 +35,20 @@ int main(int argc, char **argv)
   for (const auto &entry : std::filesystem::directory_iterator(outPath))
   {
     std::string filePath = entry.path();
-    int position = filePath.find_last_of(".");
-    std::string extension = filePath.substr(position + 1);
-    if (extension == "cr2")
-    {
+    int position=filePath.find_last_of(".");
+    std::string extension = filePath.substr(position+1);
+    if (extension == "cr2") {
       Source::ProcessingTarget processingTarget = Source::ProcessingTarget(filePath);
-      if (processingTarget.thumbnailIsLikelyIsolated)
-      {
+      if (processingTarget.thumbnailIsLikelyIsolated) {
         // cv::Mat thumbnailWithRect = processingTarget.drawThumbnailWithRect();
-        // cv::imwrite(filePath + ".jpg", thumbnailWithRect);
-        // cv::Mat imageWithRect = processingTarget.drawFinalImageWithRect();
-        // cv::imwrite(filePath + "_full.jpg", imageWithRect);
         // imshow(outPath, thumbnailWithRect);
         // cv::waitKey(0);
-        if (processingTarget.subjectIsLikelyIsolated)
-        {
-          cv::Mat imageWithRect = processingTarget.drawFinalImageWithRect();
-          imshow(outPath, imageWithRect);
-          cv::waitKey(0);
+        if (processingTarget.subjectIsLikelyIsolated) {
+          // cv::Mat imageWithRect = processingTarget.drawFinalImageWithRect();
+          // imshow(outPath, imageWithRect);
+          // cv::waitKey(0);
           std::string path = std::string(outPath);
-          // XmpTool::XmpWriter xmp = XmpTool::XmpWriter(filePath, processingTarget);
+          XmpTool::XmpWriter xmp = XmpTool::XmpWriter(filePath, processingTarget, profileName);
         }
       }
     }

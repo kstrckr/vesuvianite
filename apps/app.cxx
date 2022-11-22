@@ -1,6 +1,6 @@
 #include <filesystem>
 #include <opencv2/opencv.hpp>
-#include <nfd.h>
+// #include <nfd.h>
 // #include <stdio.h>
 
 // #include <vesuvianite/HoughLines.hpp>
@@ -13,18 +13,20 @@
 
 // Placement placementData;
 
-int main()
+int main(int argc, char **argv)
 {
   cv::Mat image;
   cv::RotatedRect isolationSource;
 
   // std::string path = "/run/media/a/4tb/Downloads/example_t2t_raws/51A/51A/";
-  NFD_Init();
+  // NFD_Init();
 
-  nfdchar_t *outPath;
-  nfdresult_t result = NFD_PickFolderN(&outPath, "/");
+  // nfdchar_t *outPath;
+  // nfdresult_t result = NFD_PickFolderN(&outPath, "/");
   std::string path;
-  char buffer[1000];
+  // char buffer[1000];
+
+  const std::filesystem::pathoutPath = std::filesystem::u8path(argv[1]);
 
   if (result == NFD_OKAY)
   {
